@@ -87,3 +87,17 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Wing project settings
+*.wpu
+
+# Qt
+ui_*.py
+*_rc.py
+
+# Asciidoctor
+*.html
+
+# Application
+*.ini
+*.sqlite
