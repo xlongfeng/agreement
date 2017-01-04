@@ -60,6 +60,19 @@
     </message>
 </context>
 <context>
+    <name>ItemCashOutEditDialog</name>
+    <message>
+        <location filename="item.py" line="197"/>
+        <source>Phase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="item.py" line="197"/>
+        <source>Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ItemDualPhaseView</name>
     <message>
         <location filename="itemdualphaseview.ui" line="41"/>
@@ -137,9 +150,22 @@
         <translation>生效日期</translation>
     </message>
     <message>
-        <location filename="item.py" line="67"/>
+        <location filename="item.py" line="68"/>
         <source>Rule {}</source>
         <translation>规则 {}</translation>
+    </message>
+</context>
+<context>
+    <name>ItemMarkupEditDialog</name>
+    <message>
+        <location filename="item.py" line="156"/>
+        <source>Phase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="item.py" line="156"/>
+        <source>Amount</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -226,40 +252,54 @@
 <context>
     <name>ItemViewDialog</name>
     <message>
-        <location filename="item.py" line="237"/>
+        <location filename="item.py" line="353"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="item.py" line="256"/>
+        <location filename="item.py" line="372"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="item.py" line="255"/>
+        <location filename="item.py" line="371"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="item.py" line="195"/>
+        <location filename="item.py" line="304"/>
         <source>odd</source>
         <translation>单</translation>
     </message>
     <message>
-        <location filename="item.py" line="197"/>
+        <location filename="item.py" line="306"/>
         <source>even</source>
         <translation>双</translation>
     </message>
     <message>
-        <location filename="item.py" line="199"/>
+        <location filename="item.py" line="308"/>
         <source>every</source>
         <translation>每</translation>
     </message>
     <message>
-        <location filename="item.py" line="200"/>
+        <location filename="item.py" line="309"/>
         <source>Since {}, {} month get dual phase
 </source>
-        <translation type="unfinished">从{}, {}月过双期
+        <translation>从 {}, {}月过双期
+</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="312"/>
+        <source>Since {} phase, rise in price {}
+</source>
+        <translation>从 {} 期, 涨价 {}
+</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="315"/>
+        <source>At {} phase, cash out
+</source>
+        <translation>第 {} 期, 取现
 </translation>
     </message>
 </context>

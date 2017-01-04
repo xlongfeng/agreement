@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     
-    app.setWindowIcon(QIcon(':/images/Agreement.ico'))
+    app.setWindowIcon(QIcon(':/images/agreement.png'))
     
     font = app.font()  
     font.setPointSize(10)
