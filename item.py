@@ -64,7 +64,7 @@ class ItemDualPhaseView(QGroupBox):
         super(ItemDualPhaseView, self).__init__(parent)
         self.ui = Ui_ItemDualPhaseView()
         self.ui.setupUi(self)
-        self.setTitle(_translate("ItemDualPhaseView", "Rule {}".format(index + 1)))
+        self.setTitle(_translate("ItemDualPhaseView", "Rule {}").format(index + 1))
         self.monthCheckBox = list()
         self.monthCheckBox.append(self.ui.m1CheckBox)
         self.monthCheckBox.append(self.ui.m2CheckBox)
@@ -170,6 +170,14 @@ class ItemViewDialog(QDialog):
         if not checked:
             self.ui.feeLineEdit.setText(self.ui.checkoutLineEdit.text())
     
+    def dualPhaseEdit(self):
+        dualPhase = self.loadDualPhase()
+        dialog = ItemDualPhaseEditDialog(dualPhase, self)
+        if dialog.exec() == QDialog.Accepted:
+            dualPhase = dialog.dualPhase()
+            self.item.dualPhase = json.dumps(dualPhase)
+            self.ui.infoTextEdit.setPlainText(self.loadInformation())
+    
     def loadDualPhase(self):
         if self.item.dualPhase is not None and self.item.dualPhase != "":
             dualPhase = json.loads(self.item.dualPhase)
@@ -177,12 +185,19 @@ class ItemViewDialog(QDialog):
             dualPhase = []
         return dualPhase
     
-    def dualPhaseEdit(self):
+    def loadInformation(self):
         dualPhase = self.loadDualPhase()
-        dialog = ItemDualPhaseEditDialog(dualPhase, self)
-        if dialog.exec() == QDialog.Accepted:
-            dualPhase = dialog.dualPhase()
-            self.item.dualPhase = json.dumps(dualPhase)
+        info = ""
+        for phase in dualPhase:
+            months = phase["months"]
+            if months == [1, 3, 5, 7, 9, 11]:
+                months = _translate("ItemViewDialog", "odd")
+            elif months == [2, 4, 6, 8, 10, 12]:
+                months = _translate("ItemViewDialog", "even")
+            elif months == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
+                months = _translate("ItemViewDialog", "every")
+            info += _translate("ItemViewDialog", "Since {}, {} month get dual phase\n").format(phase["date"], months)
+        return info
     
     def loadItem(self):
         self.ui.nameLineEdit.setText(self.item.name)
@@ -197,18 +212,7 @@ class ItemViewDialog(QDialog):
         else:
             self.customFee(False)
         self.ui.periodSpinBox.setValue(self.item.period)
-        dualPhase = self.loadDualPhase()
-        info = ""
-        for phase in dualPhase:
-            months = phase["months"]
-            if months == [1, 3, 5, 7, 9, 11]:
-                months = "odd month"
-            elif months == [2, 4, 6, 8, 10, 12]:
-                months = "even month"
-            elif months == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
-                            months = "every month"
-            info += "Since {}, {} has dual phase\n".format(phase["date"], months)
-        self.ui.infoTextEdit.setPlainText(info)
+        self.ui.infoTextEdit.setPlainText(self.loadInformation())
         self.ui.noteTextEdit.setPlainText(self.item.note)
     
     def saveItem(self):
