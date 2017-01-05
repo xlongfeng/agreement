@@ -1,60 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<!DOCTYPE TS><TS version="2.0" language="zh_CN" sourcelanguage="">
 <context>
-    <name>Agreement</name>
+    <name>Contract</name>
     <message>
-        <location filename="agreement.ui" line="14"/>
-        <source>Agreement Manager</source>
+        <location filename="contract.ui" line="14"/>
+        <source>Contract Manager</source>
         <translation>会子管理</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="46"/>
+        <location filename="contract.pyw" line="46"/>
         <source>New Item</source>
         <translation>新建会子</translation>
     </message>
     <message>
-        <location filename="agreement.ui" line="58"/>
+        <location filename="contract.ui" line="58"/>
         <source>about:blank</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="40"/>
+        <location filename="contract.pyw" line="40"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="41"/>
+        <location filename="contract.pyw" line="41"/>
         <source>New Database</source>
         <translation>新建数据库</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="42"/>
+        <location filename="contract.pyw" line="42"/>
         <source>Open Database</source>
         <translation>打开数据库</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="45"/>
+        <location filename="contract.pyw" line="45"/>
         <source>Item</source>
         <translation>会子</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="30"/>
+        <location filename="contract.pyw" line="30"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="30"/>
+        <location filename="contract.pyw" line="30"/>
         <source>Unit</source>
         <translation>名</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="30"/>
+        <location filename="contract.pyw" line="30"/>
         <source>Name</source>
         <translation>会头</translation>
     </message>
     <message>
-        <location filename="agreement.pyw" line="43"/>
+        <location filename="contract.pyw" line="43"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>

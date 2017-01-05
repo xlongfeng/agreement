@@ -9,17 +9,17 @@ from PyQt5.QtGui import QIcon, QFont, QDesktopServices
 from PyQt5.QtWidgets import (QApplication, QDialog, QMainWindow,
                              QTreeWidgetItem, QHeaderView, QMessageBox)
 
-import agreement_rc
-from ui_agreement import *
+import contract_rc
+from ui_contract import *
 
 from item import *
 
 _translate = QCoreApplication.translate
 
-class Agreement(QMainWindow):
+class Contract(QMainWindow):
     def __init__(self, parent=None):
-        super(Agreement, self).__init__(parent)
-        self.ui = Ui_Agreement()
+        super(Contract, self).__init__(parent)
+        self.ui = Ui_Contract()
         self.ui.setupUi(self)
         
         self.addMenus()
@@ -27,9 +27,9 @@ class Agreement(QMainWindow):
         self.owner = QTreeWidgetItem(["xlongfeng肖龙峰"])
         self.ui.itemTreeWidget.addTopLevelItem(self.owner)
         
-        self.ui.itemTreeWidget.setHeaderLabels([_translate('Agreement', "Date"), \
-                                                _translate('Agreement', "Unit"), \
-                                                _translate('Agreement', "Name")])
+        self.ui.itemTreeWidget.setHeaderLabels([_translate('Contract', "Date"), \
+                                                _translate('Contract', "Unit"), \
+                                                _translate('Contract', "Name")])
         self.ui.itemTreeWidget.header().resizeSection(0, 128)
         self.ui.itemTreeWidget.header().resizeSection(1, 32)
         self.ui.itemTreeWidget.itemDoubleClicked.connect(self.editItem)
@@ -37,13 +37,13 @@ class Agreement(QMainWindow):
     
     def addMenus(self):
         menuBar = self.menuBar()
-        fileMenu = menuBar.addMenu(_translate("Agreement", "File"))
-        fileMenu.addAction(_translate('Agreement', 'New Database'), self.newDatabase)
-        fileMenu.addAction(_translate('Agreement', 'Open Database'), self.openDatabase)
-        fileMenu.addAction(_translate('Agreement', 'Exit'), QCoreApplication.instance().quit)
+        fileMenu = menuBar.addMenu(_translate("Contract", "File"))
+        fileMenu.addAction(_translate('Contract', 'New Database'), self.newDatabase)
+        fileMenu.addAction(_translate('Contract', 'Open Database'), self.openDatabase)
+        fileMenu.addAction(_translate('Contract', 'Exit'), QCoreApplication.instance().quit)
         
-        itemMenu = menuBar.addMenu(_translate("Agreement", "Item"))
-        itemMenu.addAction(_translate('Agreement', 'New Item'), self.newItem)
+        itemMenu = menuBar.addMenu(_translate("Contract", "Item"))
+        itemMenu.addAction(_translate('Contract', 'New Item'), self.newItem)
     
     def newDatabase(self):
         pass
@@ -78,17 +78,17 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     
-    app.setWindowIcon(QIcon(':/images/agreement.png'))
+    app.setWindowIcon(QIcon(':/images/contract.png'))
     
     font = app.font()  
     font.setPointSize(10)
     app.setFont(font)
     
     translator = QTranslator(app)
-    translator.load('Agreement_zh_CN')
+    translator.load('Contract_zh_CN')
     app.installTranslator(translator)
     
-    agreement = Agreement()
-    agreement.show()
+    contract = Contract()
+    contract.show()
     
     sys.exit(app.exec_())

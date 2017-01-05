@@ -1,18 +1,18 @@
 QT += core gui widgets
-TARGET = agreement
+TARGET = contract
 TEMPLATE = app
 
 SOURCES += \
-    agreement.pyw \
+    contract.pyw \
     item.py
 
 FORMS += \
-    agreement.ui \
+    contract.ui \
     itemview.ui \
     itemphaseview.ui \
     itemdualphaseview.ui
 	
-TRANSLATIONS += agreement_zh_CN.ts
+TRANSLATIONS += contract_zh_CN.ts
 
 RESOURCES += \
-    agreement.qrc
+    contract.qrc
