@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
+from enum import Enum
 import json
 
 import sqlalchemy
@@ -15,12 +16,13 @@ from sqlalchemy.ext.automap import automap_base
 from PyQt5.QtCore import Qt, QCoreApplication, QDate
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, \
                              QFormLayout, QWidget, QLabel, QGroupBox, \
-                             QSpinBox, QLineEdit, QMessageBox)
+                             QSpinBox, QLineEdit, QHeaderView, QTreeWidgetItem, \
+                             QMessageBox)
 from PyQt5.QtGui import QIntValidator
 
 from ui_itemview import *
 from ui_itemphaseview import *
-from ui_itemdualphaseview import *
+from ui_itemdualphasenewview import *
 
 _translate = QCoreApplication.translate
 
@@ -55,17 +57,58 @@ class ItemModel(Base):
     def startDatetoString(self):
         return self.startDate.strftime("%Y-%m-%d")
 
+    def getMarkup(self):
+        if self.markup is not None and self.markup != "":
+            markup = json.loads(self.markup)
+            markup = sorted(markup, key=lambda x: x["phase"])
+        else:
+            markup = []
+        return markup
+    
+    def setMarkup(self, markup):
+        self.markup = json.dumps(markup)
+    
+    def getCashOut(self):
+        if self.cashOut is not None and self.cashOut != "":
+            cashOut = json.loads(self.cashOut)
+            cashOut = sorted(cashOut)
+        else:
+            cashOut = []
+        return cashOut
+    
+    def setCashOut(self, cashOut):
+        self.cashOut = json.dumps(cashOut)
+    
+    def getCashOutAmount(self, phase):
+        return (phase - 1) * self.checkout + (self.period - phase - 1) * self.checkin
+    
+    def getDualPhase(self):
+        if self.dualPhase is not None and self.dualPhase != "":
+            dualPhase = json.loads(self.dualPhase)
+            dualPhase = sorted(dualPhase, key=lambda x: x["date"])
+        else:
+            dualPhase = []
+        return dualPhase
+    
+    def setDualPhase(self, dualPhase):
+        self.dualPhase = json.dumps(dualPhase)
+
 engine = create_engine('sqlite:///storage.sqlite')
 Base.metadata.create_all(engine)
 
 session = sessionmaker(engine)()
 
-class ItemDualPhaseView(QGroupBox):
-    def __init__(self, index, parent=None):
-        super(ItemDualPhaseView, self).__init__(parent)
-        self.ui = Ui_ItemDualPhaseView()
+class ItemDualPhaseNewDialog(QDialog):
+    def __init__(self, item, dualPhaseEdit, parent=None):
+        super(ItemDualPhaseNewDialog, self).__init__(parent)
+        self.ui = Ui_ItemDualPhaseNewView()
         self.ui.setupUi(self)
-        self.setTitle(_translate("ItemDualPhaseView", "Rule {}").format(index + 1))
+        
+        self.item = item
+        minDate = item.startDate
+        maxDate = item.startDate + timedelta(days=item.period * 31)
+        self.ui.dateEdit.setDateRange(minDate, maxDate)
+        
         self.monthCheckBox = list()
         self.monthCheckBox.append(self.ui.m1CheckBox)
         self.monthCheckBox.append(self.ui.m2CheckBox)
@@ -79,12 +122,27 @@ class ItemDualPhaseView(QGroupBox):
         self.monthCheckBox.append(self.ui.m10CheckBox)
         self.monthCheckBox.append(self.ui.m11CheckBox)
         self.monthCheckBox.append(self.ui.m12CheckBox)
+        
+        self.dualPhaseEdit = dualPhaseEdit
+        self.loadDualPhase()
+        self.dualPhaseDeleted = False
+        if dualPhaseEdit is None:
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
+        else:
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
+        self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
+        self.ui.buttonBox.accepted.connect(self.onAccepted)
+        self.ui.buttonBox.rejected.connect(self.reject)
+        self.ui.buttonBox.clicked.connect(self.onButtonClicked)
     
-    def loadDualPhase(self, phase):
-        self.setChecked(True)
-        self.ui.dateEdit.setDate(QDate.fromString(phase["date"], Qt.ISODate))
+    def loadDualPhase(self):
+        if self.dualPhaseEdit is None:
+            return
+        
+        self.ui.dateEdit.setDate(QDate.fromString(self.dualPhaseEdit["date"], Qt.ISODate))
         for i in range(0, 12):
-            if (i + 1) in phase["months"]:
+            if (i + 1) in self.dualPhaseEdit["months"]:
                 self.monthCheckBox[i].setChecked(True)
     
     def monthHasChecked(self):
@@ -102,130 +160,161 @@ class ItemDualPhaseView(QGroupBox):
                 months.append(i + 1)
         return dict(date=qdate_to_date(self.ui.dateEdit.date()).isoformat(),
                     months=months)
+    
+    def onAccepted(self):
+        if self.monthHasChecked() == False:
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "No month was checked"))
+            return
+        
+        dualPhase = self.item.getDualPhase()
+        for dp in dualPhase:
+            if dp["date"] == self.getDualPhase()["date"] and self.dualPhaseEdit is None:
+                QMessageBox.warning(self, "", _translate("ItemViewDialog", "Duplicate date"))
+                return
 
-class ItemDualPhaseEditDialog(QDialog):
-    def __init__(self, dualPhases, parent=None):
-        super(ItemDualPhaseEditDialog, self).__init__(parent)
-        self.rules = list()
-        vLayout = QVBoxLayout(self)
-        
-        rule = ItemDualPhaseView(0, self)
-        self.rules.append(rule)
-        vLayout.addWidget(rule)
-        
-        rule = ItemDualPhaseView(1, self)
-        self.rules.append(rule)
-        vLayout.addWidget(rule)
-        
-        rule = ItemDualPhaseView(2, self)
-        self.rules.append(rule)
-        vLayout.addWidget(rule)
-        
-        rule = ItemDualPhaseView(3, self)
-        self.rules.append(rule)
-        vLayout.addWidget(rule)
-        
-        self.dialogButtonBox = QDialogButtonBox(self)
-        self.dialogButtonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
-        self.dialogButtonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.dialogButtonBox.accepted.connect(self.accept)
-        self.dialogButtonBox.rejected.connect(self.reject)
-        vLayout.addWidget(self.dialogButtonBox)
-        
-        self.loadDualPhase(dualPhases)
+        if self.dualPhaseEdit is not None:
+            dualPhase.remove(self.dualPhaseEdit)
+        if self.dualPhaseDeleted == False:
+            dualPhase.append(self.getDualPhase())
+        self.item.setDualPhase(dualPhase)
+        self.accept()
     
-    def loadDualPhase(self, dualPhases):
-        index = 0
-        for dualPhase in dualPhases:
-            rule = self.rules[index]
-            rule.loadDualPhase(dualPhase)
-            index += 1
-    
-    def getDualPhase(self):
-        dualPhaseRule = list()
-        for rule in self.rules:
-            if rule.isChecked() and rule.monthHasChecked():
-                dualPhaseRule.append(rule.getDualPhase())
-        return dualPhaseRule
+    def onButtonClicked(self, button):
+        if self.ui.buttonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
+            self.dualPhaseDeleted = True
+            self.onAccepted()
 
-class ItemMarkupEditDialog(QDialog):
-    def __init__(self, markups, parent=None):
-        super(ItemMarkupEditDialog, self).__init__(parent)
-        layout = QFormLayout(self)
+class ItemMarkupNewDialog(QDialog):
+    def __init__(self, item, markupEdit, parent=None):
+        super(ItemMarkupNewDialog, self).__init__(parent)
+        self.ui = Ui_ItemPhaseView()
+        self.ui.setupUi(self)
         
-        layout.addRow(QLabel(_translate("ItemMarkupEditDialog", "Phase")), QLabel(_translate("ItemMarkupEditDialog", "Amount")))
+        self.item = item
         
-        self.markups = list()
-        self.markups.append((QSpinBox(self), QLineEdit(self)))
-        self.markups.append((QSpinBox(self), QLineEdit(self)))
-        self.markups.append((QSpinBox(self), QLineEdit(self)))
-        self.markups.append((QSpinBox(self), QLineEdit(self)))
+        self.ui.phaseSpinBox.setRange(1, item.period)
+        self.ui.amountLineEdit.setValidator(QIntValidator(self))
         
-        for markup in self.markups:
-            markup[0].setRange(1, 500)
-            markup[1].setValidator(QIntValidator(self))
-            layout.addRow(markup[0], markup[1])
-        
-        self.dialogButtonBox = QDialogButtonBox(self)
-        self.dialogButtonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
-        self.dialogButtonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.dialogButtonBox.accepted.connect(self.accept)
-        self.dialogButtonBox.rejected.connect(self.reject)
-        layout.addRow(self.dialogButtonBox)
-        
-        self.loadMarkup(markups)
+        self.markupEdit = markupEdit
+        self.loadMarkupEdit()
+        self.markupDeleted = False
+        if markupEdit is None:
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
+        else:
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
+        self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
+        self.ui.buttonBox.accepted.connect(self.onAccepted)
+        self.ui.buttonBox.rejected.connect(self.reject)
+        self.ui.buttonBox.clicked.connect(self.onButtonClicked)
     
-    def loadMarkup(self, markups):
-        index = 0
-        for markup in markups:
-            self.markups[index][0].setValue(markup["phase"])
-            self.markups[index][1].setText(str(markup["amount"]))
-            index += 1
+    def loadMarkupEdit(self):
+        if self.markupEdit is None:
+            return
+        
+        self.ui.phaseSpinBox.setValue(self.markupEdit["phase"])
+        self.ui.amountLineEdit.setText(str(self.markupEdit["amount"]))
     
     def getMarkup(self):
-        markups = list()
-        for markup in self.markups:
-            if markup[1].text() != "":
-                markups.append(dict(phase=markup[0].value(), amount=int(markup[1].text())))
-        return markups
-
-class ItemCashOutEditDialog(QDialog):
-    def __init__(self, cashOuts, quantity, parent=None):
-        super(ItemCashOutEditDialog, self).__init__(parent)
-        layout = QFormLayout(self)
-        
-        layout.addRow(QLabel(_translate("ItemCashOutEditDialog", "Phase")), QLabel(_translate("ItemCashOutEditDialog", "Amount")))
-        
-        self.cashOuts = list()
-        for i in range(0, quantity):
-            self.cashOuts.append((QSpinBox(self), QLineEdit(self)))
-        
-        for cashOut in self.cashOuts:
-            cashOut[0].setRange(0, 500)
-            cashOut[1].setReadOnly(True)
-            layout.addRow(cashOut[0], cashOut[1])
-        
-        self.dialogButtonBox = QDialogButtonBox(self)
-        self.dialogButtonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
-        self.dialogButtonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.dialogButtonBox.accepted.connect(self.accept)
-        self.dialogButtonBox.rejected.connect(self.reject)
-        layout.addRow(self.dialogButtonBox)
-        
-        self.loadCashOut(cashOuts)
+        return dict(phase=self.ui.phaseSpinBox.value(), amount=int(self.ui.amountLineEdit.text()))
     
-    def loadCashOut(self, cashOuts):
-        index = 0
-        for cashOut in cashOuts:
-            self.cashOuts[index][0].setValue(cashOut)
-            index += 1
+    def onAccepted(self):
+        if self.ui.amountLineEdit.text() == "":
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "No amount was input"))
+            return
+        
+        markup = self.item.getMarkup()
+        
+        for m in markup:
+            if m["phase"] == self.getMarkup()["phase"] and self.markupEdit is None:
+                QMessageBox.warning(self, "", _translate("ItemViewDialog", "Duplicate phase"))
+                return
+        
+        if self.markupEdit is not None:
+            markup.remove(self.markupEdit)
+        if self.markupDeleted == False:
+            markup.append(self.getMarkup())
+        self.item.setMarkup(markup)
+        self.accept()
+        
+    def onButtonClicked(self, button):
+        if self.ui.buttonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
+            self.markupDeleted = True
+            self.onAccepted()
+
+class ItemCashOutNewDialog(QDialog):
+    def __init__(self, item, cashOutEdit, parent=None):
+        super(ItemCashOutNewDialog, self).__init__(parent)
+        self.ui = Ui_ItemPhaseView()
+        self.ui.setupUi(self)
+        
+        self.item = item
+        
+        self.ui.phaseSpinBox.setRange(1, item.period)
+        self.ui.phaseSpinBox.valueChanged.connect(self.onPhaseChanged)
+        self.onPhaseChanged(cashOutEdit)
+        self.ui.amountLineEdit.setReadOnly(True)
+        
+        self.cashOutEdit = cashOutEdit
+        self.loadCashOutEdit()
+        self.cashOutDeleted = False
+        if cashOutEdit is None:
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
+        else:
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
+            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
+        self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
+        self.ui.buttonBox.accepted.connect(self.onAccepted)
+        self.ui.buttonBox.rejected.connect(self.reject)
+        self.ui.buttonBox.clicked.connect(self.onButtonClicked)
+    
+    def onPhaseChanged(self, phase):
+        if phase is None:
+            phase = 1
+        amount = self.item.getCashOutAmount(phase)
+        self.ui.amountLineEdit.setText(str(amount))
+    
+    def loadCashOutEdit(self):
+        if self.cashOutEdit is None:
+            return
+        
+        self.ui.phaseSpinBox.setValue(self.cashOutEdit)
     
     def getCashOut(self):
-        cashOuts = list()
-        for cashOut in self.cashOuts:
-            if cashOut[0].value() > 0:
-                cashOuts.append(cashOut[0].value())
-        return cashOuts
+        return self.ui.phaseSpinBox.value()
+    
+    def onAccepted(self):
+        cashOut = self.item.getCashOut()
+        
+        if self.getCashOut() in cashOut and self.cashOutEdit is None:
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "Duplicate phase"))
+            return
+        
+        if self.cashOutEdit is not None:
+            cashOut.remove(self.cashOutEdit)
+        if self.cashOutDeleted == False:
+            cashOut.append(self.getCashOut())
+        self.item.setCashOut(cashOut)
+        self.accept()
+        
+    def onButtonClicked(self, button):
+        if self.ui.buttonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
+            self.cashOutDeleted = True
+            self.onAccepted()
+
+class TreeWidgetItem (QTreeWidgetItem):
+    Category = Enum('Category', 'dualphase markup cashout')
+    
+    def __init__(self, category, data, strings):
+        super(TreeWidgetItem, self).__init__(strings)
+        self.category = category
+        self.data = data
+    
+    def getCategory(self):
+        return self.category
+    
+    def getData(self):
+        return self.data
 
 class ItemViewDialog(QDialog):
     def __init__(self, parent=None):
@@ -237,9 +326,13 @@ class ItemViewDialog(QDialog):
         self.ui.feeLineEdit.setValidator(QIntValidator(self))
         self.ui.checkoutLineEdit.textEdited.connect(self.checkoutEdit)
         self.ui.feeCustomCheckBox.clicked.connect(self.customFee)
-        self.ui.dualPhaseEditPushButton.pressed.connect(self.dualPhaseEdit)
-        self.ui.markupEditPushButton.pressed.connect(self.markupEdit)
-        self.ui.cashOutEditPushButton.pressed.connect(self.cashOutEdit)
+        self.ui.dualPhaseNewPushButton.pressed.connect(self.dualPhaseNew)
+        self.ui.markupNewPushButton.pressed.connect(self.markupNew)
+        self.ui.cashOutNewPushButton.pressed.connect(self.cashOutNew)
+        
+        self.ui.infoTreeWidget.setColumnCount(1)
+        self.ui.infoTreeWidget.header().setVisible(False)
+        self.ui.infoTreeWidget.itemDoubleClicked.connect(self.infoEdit)
         
         self.item = ItemModel()
     
@@ -252,52 +345,39 @@ class ItemViewDialog(QDialog):
         if not checked:
             self.ui.feeLineEdit.setText(self.ui.checkoutLineEdit.text())
     
-    def dualPhaseEdit(self):
-        dualPhase = self.loadDualPhase()
-        dialog = ItemDualPhaseEditDialog(dualPhase, self)
+    def dualPhaseNew(self, dualPhaseEdit=None):
+        self.saveItem()
+        dialog = ItemDualPhaseNewDialog(self.item, dualPhaseEdit, self)
         if dialog.exec() == QDialog.Accepted:
-            self.item.dualPhase = json.dumps(dialog.getDualPhase())
             self.loadInformation()
     
-    def markupEdit(self):
-        markup = self.loadMarkup()
-        dialog = ItemMarkupEditDialog(markup, self)
+    def markupNew(self, markupEdit=None):
+        self.saveItem()
+        dialog = ItemMarkupNewDialog(self.item, markupEdit, self)
         if dialog.exec() == QDialog.Accepted:
-            self.item.markup = json.dumps(dialog.getMarkup())
             self.loadInformation()
     
-    def cashOutEdit(self):
-        cashOut = self.loadCashOut()
-        dialog = ItemCashOutEditDialog(cashOut, self.item.quantity, self)
+    def cashOutNew(self, cashOutEdit=None):
+        self.saveItem()
+        if cashOutEdit is None and len(self.item.getCashOut()) > self.item.quantity:
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "Exceed quantity"))
+            return
+        dialog = ItemCashOutNewDialog(self.item, cashOutEdit, self)
         if dialog.exec() == QDialog.Accepted:
-            self.item.cashOut = json.dumps(dialog.getCashOut())
             self.loadInformation()
     
-    def loadDualPhase(self):
-        if self.item.dualPhase is not None and self.item.dualPhase != "":
-            dualPhase = json.loads(self.item.dualPhase)
-        else:
-            dualPhase = []
-        return dualPhase
-    
-    def loadMarkup(self):
-        if self.item.markup is not None and self.item.markup != "":
-            markup = json.loads(self.item.markup)
-        else:
-            markup = []
-        return markup
-    
-    def loadCashOut(self):
-        if self.item.cashOut is not None and self.item.cashOut != "":
-            cashOut = json.loads(self.item.cashOut)
-        else:
-            cashOut = []
-        return cashOut
+    def infoEdit(self, item, column):
+        category = item.getCategory()
+        if category == TreeWidgetItem.Category.dualphase:
+            self.dualPhaseNew(item.getData())
+        elif category == TreeWidgetItem.Category.markup:
+            self.markupNew(item.getData())
+        else: # category == TreeWidgetItem.Category.cashout:
+            self.cashOutNew(item.getData())
     
     def loadInformation(self):
-        info = ""
-        
-        for dualPhase in self.loadDualPhase():
+        self.ui.infoTreeWidget.clear()
+        for dualPhase in self.item.getDualPhase():
             months = dualPhase["months"]
             if months == [1, 3, 5, 7, 9, 11]:
                 months = _translate("ItemViewDialog", "odd")
@@ -305,15 +385,19 @@ class ItemViewDialog(QDialog):
                 months = _translate("ItemViewDialog", "even")
             elif months == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
                 months = _translate("ItemViewDialog", "every")
-            info += _translate("ItemViewDialog", "Since {}, {} month get dual phase\n").format(dualPhase["date"], months)
+            item = TreeWidgetItem(TreeWidgetItem.Category.dualphase, dualPhase, \
+                           [_translate("ItemViewDialog", "Since {}, {} month get dual phase").format(dualPhase["date"], months)])
+            self.ui.infoTreeWidget.addTopLevelItem(item)
         
-        for markup in self.loadMarkup():
-            info += _translate("ItemViewDialog", "Since {} phase, rise in price {}\n").format(markup["phase"], markup["amount"])
+        for markup in self.item.getMarkup():
+            item = TreeWidgetItem(TreeWidgetItem.Category.markup, markup, \
+                                  [_translate("ItemViewDialog", "Since {} phase, rise in price {}").format(markup["phase"], markup["amount"])])
+            self.ui.infoTreeWidget.addTopLevelItem(item)
         
-        for cashOut in self.loadCashOut():
-            info += _translate("ItemViewDialog", "At {} phase, cash out\n").format(cashOut)
-        
-        self.ui.infoTextEdit.setPlainText(info)
+        for cashOut in self.item.getCashOut():
+            item = TreeWidgetItem(TreeWidgetItem.Category.cashout, cashOut, \
+                                  [_translate("ItemViewDialog", "At {} phase, cash out {}").format(cashOut, self.item.getCashOutAmount(cashOut))])
+            self.ui.infoTreeWidget.addTopLevelItem(item)
     
     def loadItem(self):
         self.ui.nameLineEdit.setText(self.item.name)
@@ -349,19 +433,35 @@ class ItemEditDialog(ItemViewDialog):
     def __init__(self, id, parent=None):
         super(ItemEditDialog, self).__init__(parent)
         self.ui.dialogButtonBox = QDialogButtonBox(self)
+        self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
         self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
         self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
         self.layout().addWidget(self.ui.dialogButtonBox)
-        self.ui.dialogButtonBox.accepted.connect(self.save)
-        self.ui.dialogButtonBox.rejected.connect(self.reject)
+        self.ui.dialogButtonBox.clicked.connect(self.onButtonClicked)
+        self.ui.dialogButtonBox.accepted.connect(self.onAccepted)
+        self.ui.dialogButtonBox.rejected.connect(self.onRejected)
         
+        self.deleteItem = False
         self.item = session.query(ItemModel).filter_by(id = id).one()
         self.loadItem()
     
-    def save(self):
+    def onButtonClicked(self, button):
+        if self.ui.dialogButtonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
+            if QMessageBox.question(self, "", _translate("ItemViewDialog", "Continue to delete?")) == QMessageBox.Yes:
+                self.deleteItem = True
+                session.delete(self.item)
+                session.commit()
+                self.accept()
+    
+    def onAccepted(self):
         self.saveItem()
         session.commit()
         self.accept()
+    
+    def onRejected(self):
+        if session.dirty:
+            session.rollback()
+        self.reject()
 
 class ItemNewDialog(ItemViewDialog):
     def __init__(self, parent=None):
@@ -370,11 +470,16 @@ class ItemNewDialog(ItemViewDialog):
         self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
         self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
         self.layout().addWidget(self.ui.dialogButtonBox)
-        self.ui.dialogButtonBox.accepted.connect(self.new)
-        self.ui.dialogButtonBox.rejected.connect(self.reject)
+        self.ui.dialogButtonBox.accepted.connect(self.onAccept)
+        self.ui.dialogButtonBox.rejected.connect(self.onRejected)
     
-    def new(self):
+    def onAccept(self):
         self.saveItem()
         session.add(self.item)
         session.commit()
         self.accept()
+    
+    def onRejected(self):
+        if session.dirty:
+            session.rollback()
+        self.reject()

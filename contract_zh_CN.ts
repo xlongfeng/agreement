@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="zh_CN" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>Contract</name>
     <message>
@@ -59,120 +60,107 @@
     </message>
 </context>
 <context>
-    <name>ItemCashOutEditDialog</name>
+    <name>ItemDualPhaseNewView</name>
     <message>
-        <location filename="item.py" line="197"/>
-        <source>Phase</source>
+        <location filename="itemdualphasenewview.ui" line="14"/>
+        <source>New Dual Phase </source>
+        <translation>新建双期</translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="29"/>
+        <source>Effective Date</source>
+        <translation>生效日期</translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="43"/>
+        <source>1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="item.py" line="197"/>
-        <source>Amount</source>
+        <location filename="itemdualphasenewview.ui" line="50"/>
+        <source>2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="57"/>
+        <source>3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="64"/>
+        <source>4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="71"/>
+        <source>5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="78"/>
+        <source>6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="85"/>
+        <source>7</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="92"/>
+        <source>8</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="99"/>
+        <source>9</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="106"/>
+        <source>10</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="113"/>
+        <source>11</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemdualphasenewview.ui" line="120"/>
+        <source>12</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ItemDualPhaseView</name>
     <message>
-        <location filename="itemdualphaseview.ui" line="41"/>
-        <source>1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="48"/>
-        <source>2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="55"/>
-        <source>3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="62"/>
-        <source>4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="69"/>
-        <source>5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="76"/>
-        <source>6</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="83"/>
-        <source>7</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="90"/>
-        <source>8</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="97"/>
-        <source>9</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="104"/>
-        <source>10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="111"/>
-        <source>11</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="118"/>
-        <source>12</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="14"/>
-        <source>GroupBox</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="itemdualphaseview.ui" line="17"/>
-        <source>Rule</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="itemdualphaseview.ui" line="29"/>
         <source>Effective Date</source>
-        <translation>生效日期</translation>
+        <translation type="obsolete">生效日期</translation>
     </message>
     <message>
-        <location filename="item.py" line="68"/>
+        <location filename="item.py" line="69"/>
         <source>Rule {}</source>
-        <translation>规则 {}</translation>
-    </message>
-</context>
-<context>
-    <name>ItemMarkupEditDialog</name>
-    <message>
-        <location filename="item.py" line="156"/>
-        <source>Phase</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="item.py" line="156"/>
-        <source>Amount</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">规则 {}</translation>
     </message>
 </context>
 <context>
     <name>ItemPhaseView</name>
     <message>
         <location filename="itemphaseview.ui" line="14"/>
-        <source>Item Phase View</source>
+        <source>Phase View</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemphaseview.ui" line="22"/>
+        <source>Phase</source>
+        <translation>期</translation>
+    </message>
+    <message>
+        <location filename="itemphaseview.ui" line="32"/>
+        <source>Amount</source>
+        <translation>金额</translation>
     </message>
 </context>
 <context>
@@ -188,95 +176,105 @@
         <translation>会头</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="34"/>
+        <location filename="itemview.ui" line="40"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="48"/>
+        <location filename="itemview.ui" line="68"/>
         <source>Quantity</source>
         <translation>名</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="65"/>
+        <location filename="itemview.ui" line="54"/>
         <source>Checkin</source>
         <translation>活期</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="75"/>
+        <location filename="itemview.ui" line="109"/>
         <source>Checkout</source>
         <translation>死期</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="85"/>
+        <location filename="itemview.ui" line="89"/>
         <source>Custom</source>
         <translation>自定义</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="88"/>
+        <location filename="itemview.ui" line="92"/>
         <source>Fee</source>
         <translation>会头钱</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="102"/>
+        <location filename="itemview.ui" line="123"/>
         <source>Period</source>
         <translation>期数</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="126"/>
-        <source>Dual Phase Edit</source>
-        <translation>双期设置</translation>
+        <location filename="itemview.ui" line="170"/>
+        <source>New Dual Phase</source>
+        <translation>新建双期</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="133"/>
-        <source>Markup Edit</source>
-        <translation>涨价设置</translation>
+        <location filename="itemview.ui" line="177"/>
+        <source>New Markup</source>
+        <translation>新建涨价</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="140"/>
-        <source>Cash Out Edit</source>
-        <translation>取现设置</translation>
+        <location filename="itemview.ui" line="184"/>
+        <source>New Cash Out</source>
+        <translation>新建取现</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="164"/>
+        <location filename="itemview.ui" line="149"/>
         <source>Information</source>
         <translation>信息</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="180"/>
+        <location filename="itemview.ui" line="205"/>
         <source>Note</source>
         <translation>备注</translation>
+    </message>
+    <message>
+        <location filename="itemview.ui" line="61"/>
+        <source>400</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="itemview.ui" line="116"/>
+        <source>600</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ItemViewDialog</name>
     <message>
-        <location filename="item.py" line="353"/>
+        <location filename="item.py" line="427"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="item.py" line="372"/>
+        <location filename="item.py" line="446"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="item.py" line="371"/>
+        <location filename="item.py" line="445"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="item.py" line="304"/>
+        <location filename="item.py" line="374"/>
         <source>odd</source>
         <translation>单</translation>
     </message>
     <message>
-        <location filename="item.py" line="306"/>
+        <location filename="item.py" line="376"/>
         <source>even</source>
         <translation>双</translation>
     </message>
     <message>
-        <location filename="item.py" line="308"/>
+        <location filename="item.py" line="378"/>
         <source>every</source>
         <translation>每</translation>
     </message>
@@ -284,22 +282,60 @@
         <location filename="item.py" line="309"/>
         <source>Since {}, {} month get dual phase
 </source>
-        <translation>从 {}, {}月过双期
+        <translation type="obsolete">从 {}, {}月过双期
 </translation>
     </message>
     <message>
         <location filename="item.py" line="312"/>
         <source>Since {} phase, rise in price {}
 </source>
-        <translation>从 {} 期, 涨价 {}
+        <translation type="obsolete">从 {} 期, 涨价 {}
 </translation>
     </message>
     <message>
-        <location filename="item.py" line="315"/>
-        <source>At {} phase, cash out
-</source>
-        <translation>第 {} 期, 取现
-</translation>
+        <location filename="item.py" line="379"/>
+        <source>Since {}, {} month get dual phase</source>
+        <translation>从 {}, {}月过双期</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="384"/>
+        <source>Since {} phase, rise in price {}</source>
+        <translation>从 {} 期, 涨价 {}</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="389"/>
+        <source>At {} phase, cash out</source>
+        <translation>第 {} 期, 取现</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="260"/>
+        <source>Delete</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="164"/>
+        <source>No month was checked</source>
+        <translation>未选择月份</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="221"/>
+        <source>No amount was input</source>
+        <translation>未输入金额</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="170"/>
+        <source>Duplicate date</source>
+        <translation>重复日期</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="281"/>
+        <source>Duplicate phase</source>
+        <translation>重复期</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="354"/>
+        <source>Exceed quantity</source>
+        <translation>超过名数</translation>
     </message>
 </context>
 </TS>

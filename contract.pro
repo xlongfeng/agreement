@@ -10,7 +10,7 @@ FORMS += \
     contract.ui \
     itemview.ui \
     itemphaseview.ui \
-    itemdualphaseview.ui
+    itemdualphasenewview.ui
 	
 TRANSLATIONS += contract_zh_CN.ts
 

@@ -59,17 +59,25 @@ class Contract(QMainWindow):
     
     def newItem(self):
         dialog = ItemNewDialog(self)
-        dialog.exec()
+        if dialog.exec() == QDialog.Accepted:
+            item = dialog.item
+            self.owner.addChild(QTreeWidgetItem([item.startDatetoString(), \
+                                                 str(item.quantity), \
+                                                 item.name, str(item.id)]))
+            self.owner.sortChildren(0, Qt.DescendingOrder)
     
     def editItem(self, treeWidgetItem, column):
         if treeWidgetItem == self.owner:
             return
         dialog = ItemEditDialog(int(treeWidgetItem.text(3)), self)
         if dialog.exec() == QDialog.Accepted:
-            item = dialog.item
-            treeWidgetItem.setText(0, item.startDatetoString())
-            treeWidgetItem.setText(1, str(item.quantity))
-            treeWidgetItem.setText(2, str(item.name))
+            if dialog.deleteItem:
+                self.owner.takeChild(self.owner.indexOfChild(treeWidgetItem))
+            else:
+                item = dialog.item
+                treeWidgetItem.setText(0, item.startDatetoString())
+                treeWidgetItem.setText(1, str(item.quantity))
+                treeWidgetItem.setText(2, str(item.name))
             self.owner.sortChildren(0, Qt.DescendingOrder)
 
 if __name__ == '__main__':
