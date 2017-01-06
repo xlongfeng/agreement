@@ -127,14 +127,10 @@ class ItemDualPhaseNewDialog(QDialog):
         self.loadDualPhase()
         self.dualPhaseDeleted = False
         if dualPhaseEdit is None:
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
-        else:
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
-        self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.ui.buttonBox.accepted.connect(self.onAccepted)
-        self.ui.buttonBox.rejected.connect(self.reject)
-        self.ui.buttonBox.clicked.connect(self.onButtonClicked)
+            self.ui.deletePushButton.setVisible(False)
+        self.ui.deletePushButton.pressed.connect(self.onDelete)
+        self.ui.savePushButton.pressed.connect(self.onAccepted)
+        self.ui.cancelPushButton.pressed.connect(self.reject)
     
     def loadDualPhase(self):
         if self.dualPhaseEdit is None:
@@ -179,10 +175,9 @@ class ItemDualPhaseNewDialog(QDialog):
         self.item.setDualPhase(dualPhase)
         self.accept()
     
-    def onButtonClicked(self, button):
-        if self.ui.buttonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
-            self.dualPhaseDeleted = True
-            self.onAccepted()
+    def onDelete(self):
+        self.dualPhaseDeleted = True
+        self.onAccepted()
 
 class ItemMarkupNewDialog(QDialog):
     def __init__(self, item, markupEdit, parent=None):
@@ -199,14 +194,10 @@ class ItemMarkupNewDialog(QDialog):
         self.loadMarkupEdit()
         self.markupDeleted = False
         if markupEdit is None:
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
-        else:
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
-        self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.ui.buttonBox.accepted.connect(self.onAccepted)
-        self.ui.buttonBox.rejected.connect(self.reject)
-        self.ui.buttonBox.clicked.connect(self.onButtonClicked)
+            self.ui.deletePushButton.setVisible(False)
+        self.ui.deletePushButton.pressed.connect(self.onDelete)
+        self.ui.savePushButton.pressed.connect(self.onAccepted)
+        self.ui.cancelPushButton.pressed.connect(self.reject)
     
     def loadMarkupEdit(self):
         if self.markupEdit is None:
@@ -237,10 +228,9 @@ class ItemMarkupNewDialog(QDialog):
         self.item.setMarkup(markup)
         self.accept()
         
-    def onButtonClicked(self, button):
-        if self.ui.buttonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
-            self.markupDeleted = True
-            self.onAccepted()
+    def onDelete(self):
+        self.markupDeleted = True
+        self.onAccepted()
 
 class ItemCashOutNewDialog(QDialog):
     def __init__(self, item, cashOutEdit, parent=None):
@@ -259,14 +249,10 @@ class ItemCashOutNewDialog(QDialog):
         self.loadCashOutEdit()
         self.cashOutDeleted = False
         if cashOutEdit is None:
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
-        else:
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
-            self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
-        self.ui.buttonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.ui.buttonBox.accepted.connect(self.onAccepted)
-        self.ui.buttonBox.rejected.connect(self.reject)
-        self.ui.buttonBox.clicked.connect(self.onButtonClicked)
+            self.ui.deletePushButton.setVisible(False)
+        self.ui.deletePushButton.pressed.connect(self.onDelete)
+        self.ui.savePushButton.pressed.connect(self.onAccepted)
+        self.ui.cancelPushButton.pressed.connect(self.reject)
     
     def onPhaseChanged(self, phase):
         if phase is None:
@@ -297,10 +283,9 @@ class ItemCashOutNewDialog(QDialog):
         self.item.setCashOut(cashOut)
         self.accept()
         
-    def onButtonClicked(self, button):
-        if self.ui.buttonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
-            self.cashOutDeleted = True
-            self.onAccepted()
+    def onDelete(self):
+        self.cashOutDeleted = True
+        self.onAccepted()
 
 class TreeWidgetItem (QTreeWidgetItem):
     Category = Enum('Category', 'dualphase markup cashout')
@@ -333,6 +318,8 @@ class ItemViewDialog(QDialog):
         self.ui.infoTreeWidget.setColumnCount(1)
         self.ui.infoTreeWidget.header().setVisible(False)
         self.ui.infoTreeWidget.itemDoubleClicked.connect(self.infoEdit)
+        
+        self.ui.cancelPushButton.pressed.connect(self.onRejected)
         
         self.item = ItemModel()
     
@@ -374,6 +361,11 @@ class ItemViewDialog(QDialog):
             self.markupNew(item.getData())
         else: # category == TreeWidgetItem.Category.cashout:
             self.cashOutNew(item.getData())
+    
+    def onRejected(self):
+        if session.dirty:
+            session.rollback()
+        self.reject()
     
     def loadInformation(self):
         self.ui.infoTreeWidget.clear()
@@ -432,54 +424,33 @@ class ItemViewDialog(QDialog):
 class ItemEditDialog(ItemViewDialog):
     def __init__(self, id, parent=None):
         super(ItemEditDialog, self).__init__(parent)
-        self.ui.dialogButtonBox = QDialogButtonBox(self)
-        self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Delete"), QDialogButtonBox.DestructiveRole)
-        self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Save"), QDialogButtonBox.AcceptRole)
-        self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.layout().addWidget(self.ui.dialogButtonBox)
-        self.ui.dialogButtonBox.clicked.connect(self.onButtonClicked)
-        self.ui.dialogButtonBox.accepted.connect(self.onAccepted)
-        self.ui.dialogButtonBox.rejected.connect(self.onRejected)
+        self.ui.deletePushButton.pressed.connect(self.onDelete)
+        self.ui.savePushButton.pressed.connect(self.onAccepted)
         
         self.deleteItem = False
         self.item = session.query(ItemModel).filter_by(id = id).one()
         self.loadItem()
     
-    def onButtonClicked(self, button):
-        if self.ui.dialogButtonBox.buttonRole(button) == QDialogButtonBox.DestructiveRole:
-            if QMessageBox.question(self, "", _translate("ItemViewDialog", "Continue to delete?")) == QMessageBox.Yes:
-                self.deleteItem = True
-                session.delete(self.item)
-                session.commit()
-                self.accept()
+    def onDelete(self):
+        if QMessageBox.question(self, "", _translate("ItemViewDialog", "Continue to delete {}?").format(self.item.name)) == QMessageBox.Yes:
+            self.deleteItem = True
+            session.delete(self.item)
+            session.commit()
+            self.accept()
     
     def onAccepted(self):
         self.saveItem()
         session.commit()
         self.accept()
-    
-    def onRejected(self):
-        if session.dirty:
-            session.rollback()
-        self.reject()
 
 class ItemNewDialog(ItemViewDialog):
     def __init__(self, parent=None):
         super(ItemNewDialog, self).__init__(parent)
-        self.ui.dialogButtonBox = QDialogButtonBox(self)
-        self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "New"), QDialogButtonBox.AcceptRole)
-        self.ui.dialogButtonBox.addButton(_translate("ItemViewDialog", "Cancel"), QDialogButtonBox.RejectRole)
-        self.layout().addWidget(self.ui.dialogButtonBox)
-        self.ui.dialogButtonBox.accepted.connect(self.onAccept)
-        self.ui.dialogButtonBox.rejected.connect(self.onRejected)
+        self.ui.deletePushButton.setVisible(False)
+        self.ui.savePushButton.pressed.connect(self.onAccept)
     
     def onAccept(self):
         self.saveItem()
         session.add(self.item)
         session.commit()
         self.accept()
-    
-    def onRejected(self):
-        if session.dirty:
-            session.rollback()
-        self.reject()
