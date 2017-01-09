@@ -284,6 +284,8 @@ class ItemViewDialog(QDialog):
         self.ui.checkinLineEdit.setValidator(QIntValidator(self))
         self.ui.checkoutLineEdit.setValidator(QIntValidator(self))
         self.ui.feeLineEdit.setValidator(QIntValidator(self))
+        self.ui.quantityLineEdit.setValidator(QIntValidator(self))
+        self.ui.periodLineEdit.setValidator(QIntValidator(self))
         self.ui.checkoutLineEdit.textEdited.connect(self.checkoutEdit)
         self.ui.feeCustomCheckBox.clicked.connect(self.customFee)
         self.ui.dualPhaseNewPushButton.pressed.connect(self.dualPhaseNew)
@@ -401,7 +403,7 @@ class ItemViewDialog(QDialog):
     def loadItem(self):
         self.ui.nameLineEdit.setText(self.item.name)
         self.ui.startDateEdit.setDate(self.item.startDate)
-        self.ui.quantitySpinBox.setValue(self.item.quantity)
+        self.ui.quantityLineEdit.setText(str(self.item.quantity))
         self.ui.checkinLineEdit.setText(str(self.item.checkin))
         self.ui.checkoutLineEdit.setText(str(self.item.checkout))
         if self.item.fee is not None and self.item.fee != self.item.checkout:
@@ -410,14 +412,14 @@ class ItemViewDialog(QDialog):
             self.ui.feeLineEdit.setText(str(self.item.fee))
         else:
             self.customFee(False)
-        self.ui.periodSpinBox.setValue(self.item.period)
+        self.ui.periodLineEdit.setText(str(self.item.period))
         self.loadInformation()
         self.ui.noteTextEdit.setPlainText(self.item.note)
     
     def saveItem(self):
         self.item.name = self.ui.nameLineEdit.text()
         self.item.startDate = qdate_to_date(self.ui.startDateEdit.date())
-        self.item.quantity = self.ui.quantitySpinBox.value()
+        self.item.quantity = int(self.ui.quantityLineEdit.text())
         self.item.checkin = int(self.ui.checkinLineEdit.text())
         self.item.checkout = int(self.ui.checkoutLineEdit.text())
         self.item.fee = None
@@ -425,7 +427,7 @@ class ItemViewDialog(QDialog):
             fee = self.ui.feeLineEdit.text()
             if fee != "" and int(fee) != self.item.checkout:
                 self.item.fee = int(fee)
-        self.item.period = self.ui.periodSpinBox.value()
+        self.item.period = int(self.ui.periodLineEdit.text())
         self.item.note = self.ui.noteTextEdit.toPlainText()
 
 class ItemEditDialog(ItemViewDialog):

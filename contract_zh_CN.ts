@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<!DOCTYPE TS><TS version="2.0" language="zh_CN" sourcelanguage="">
 <context>
     <name>Contract</name>
     <message>
@@ -223,47 +222,47 @@
         <translation>活期</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="109"/>
+        <location filename="itemview.ui" line="102"/>
         <source>Checkout</source>
         <translation>死期</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="89"/>
+        <location filename="itemview.ui" line="82"/>
         <source>Custom</source>
         <translation>自定义</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="92"/>
+        <location filename="itemview.ui" line="85"/>
         <source>Fee</source>
         <translation>会头钱</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="123"/>
+        <location filename="itemview.ui" line="116"/>
         <source>Period</source>
         <translation>期数</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="170"/>
+        <location filename="itemview.ui" line="153"/>
         <source>New Dual Phase</source>
         <translation>新建双期</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="177"/>
+        <location filename="itemview.ui" line="160"/>
         <source>New Markup</source>
         <translation>新建涨价</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="184"/>
+        <location filename="itemview.ui" line="167"/>
         <source>New Cash Out</source>
         <translation>新建取现</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="149"/>
+        <location filename="itemview.ui" line="132"/>
         <source>Information</source>
         <translation>信息</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="205"/>
+        <location filename="itemview.ui" line="188"/>
         <source>Note</source>
         <translation>备注</translation>
     </message>
@@ -273,17 +272,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="116"/>
+        <location filename="itemview.ui" line="109"/>
         <source>600</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="232"/>
+        <location filename="itemview.ui" line="215"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="239"/>
+        <location filename="itemview.ui" line="222"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
