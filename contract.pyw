@@ -7,7 +7,8 @@ from PyQt5.QtCore import (Qt, QCoreApplication, QTranslator, QDate,
                           QDateTime, QTimer)
 from PyQt5.QtGui import QIcon, QFont, QDesktopServices
 from PyQt5.QtWidgets import (QApplication, QDialog, QMainWindow,
-                             QTreeWidgetItem, QHeaderView, QMessageBox)
+                             QTreeWidgetItem, QHeaderView,
+                             QMessageBox)
 
 import contract_rc
 from ui_contract import *
@@ -33,6 +34,14 @@ class Contract(QMainWindow):
         self.ui.itemTreeWidget.header().resizeSection(0, 128)
         self.ui.itemTreeWidget.header().resizeSection(1, 32)
         self.ui.itemTreeWidget.itemDoubleClicked.connect(self.editItem)
+        self.ui.itemTreeWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
+        editAction = QAction(_translate("Contract", "Edit"), self.ui.itemTreeWidget)
+        editAction.triggered.connect(self.itemContextMenuEditAction)
+        self.ui.itemTreeWidget.addAction(editAction)
+        deleteAction = QAction(_translate("Contract", "Delete"), self.ui.itemTreeWidget)
+        deleteAction.triggered.connect(self.itemContextMenuDeleteAction)
+        self.ui.itemTreeWidget.addAction(deleteAction)
+        
         self.loadItems()
     
     def addMenus(self):
@@ -71,14 +80,26 @@ class Contract(QMainWindow):
             return
         dialog = ItemEditDialog(int(treeWidgetItem.text(3)), self)
         if dialog.exec() == QDialog.Accepted:
-            if dialog.deleteItem:
-                self.owner.takeChild(self.owner.indexOfChild(treeWidgetItem))
-            else:
-                item = dialog.item
-                treeWidgetItem.setText(0, item.startDatetoString())
-                treeWidgetItem.setText(1, str(item.quantity))
-                treeWidgetItem.setText(2, str(item.name))
+            item = dialog.item
+            treeWidgetItem.setText(0, item.startDatetoString())
+            treeWidgetItem.setText(1, str(item.quantity))
+            treeWidgetItem.setText(2, str(item.name))
             self.owner.sortChildren(0, Qt.DescendingOrder)
+    
+    def itemContextMenuEditAction(self):
+        selectedItems = self.ui.itemTreeWidget.selectedItems()
+        if len(selectedItems) > 0:
+            self.editItem(selectedItems[0], 0)
+    
+    def itemContextMenuDeleteAction(self):
+        selectedItems = self.ui.itemTreeWidget.selectedItems()
+        if len(selectedItems) > 0:
+            treeWidgetItem = selectedItems[0]
+            if QMessageBox.question(self, "", _translate("Contract", "Continue to delete {}?").format(treeWidgetItem.text(2))) == QMessageBox.Yes:
+                item = session.query(ItemModel).filter_by(id = int(treeWidgetItem.text(3))).one()
+                session.delete(item)
+                session.commit()
+                self.owner.takeChild(self.owner.indexOfChild(treeWidgetItem))
 
 if __name__ == '__main__':
 

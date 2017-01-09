@@ -9,54 +9,69 @@
         <translation>会子管理</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="46"/>
+        <location filename="contract.pyw" line="55"/>
         <source>New Item</source>
         <translation>新建会子</translation>
     </message>
     <message>
         <location filename="contract.ui" line="58"/>
         <source>about:blank</source>
-        <translation type="unfinished"></translation>
+        <translation>about:blank</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="40"/>
+        <location filename="contract.pyw" line="49"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="41"/>
+        <location filename="contract.pyw" line="50"/>
         <source>New Database</source>
         <translation>新建数据库</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="42"/>
+        <location filename="contract.pyw" line="51"/>
         <source>Open Database</source>
         <translation>打开数据库</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="45"/>
+        <location filename="contract.pyw" line="54"/>
         <source>Item</source>
         <translation>会子</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="30"/>
+        <location filename="contract.pyw" line="31"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="30"/>
+        <location filename="contract.pyw" line="31"/>
         <source>Unit</source>
         <translation>名</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="30"/>
+        <location filename="contract.pyw" line="31"/>
         <source>Name</source>
         <translation>会头</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="43"/>
+        <location filename="contract.pyw" line="52"/>
         <source>Exit</source>
         <translation>退出</translation>
+    </message>
+    <message>
+        <location filename="contract.pyw" line="98"/>
+        <source>Continue to delete {}?</source>
+        <translation>继续删除 {} ?</translation>
+    </message>
+    <message>
+        <location filename="contract.pyw" line="38"/>
+        <source>Edit</source>
+        <translation>编辑</translation>
+    </message>
+    <message>
+        <location filename="contract.pyw" line="41"/>
+        <source>Delete</source>
+        <translation>删除</translation>
     </message>
 </context>
 <context>
@@ -132,17 +147,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="itemdualphasenewview.ui" line="131"/>
-        <source>Delete</source>
-        <translation>删除</translation>
-    </message>
-    <message>
-        <location filename="itemdualphasenewview.ui" line="151"/>
+        <location filename="itemdualphasenewview.ui" line="144"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="itemdualphasenewview.ui" line="158"/>
+        <location filename="itemdualphasenewview.ui" line="151"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -165,19 +175,24 @@
         <translation>金额</translation>
     </message>
     <message>
-        <location filename="itemphaseview.ui" line="46"/>
-        <source>Delete</source>
-        <translation>删除</translation>
-    </message>
-    <message>
-        <location filename="itemphaseview.ui" line="66"/>
+        <location filename="itemphaseview.ui" line="59"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="itemphaseview.ui" line="73"/>
+        <location filename="itemphaseview.ui" line="66"/>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="178"/>
+        <source>New Markup</source>
+        <translation>新建涨价</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="223"/>
+        <source>New Cash Out</source>
+        <translation>新建取现</translation>
     </message>
 </context>
 <context>
@@ -185,7 +200,7 @@
     <message>
         <location filename="itemview.ui" line="14"/>
         <source>Item View</source>
-        <translation type="unfinished"></translation>
+        <translation>会子</translation>
     </message>
     <message>
         <location filename="itemview.ui" line="24"/>
@@ -263,17 +278,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="219"/>
-        <source>Delete</source>
-        <translation>删除</translation>
-    </message>
-    <message>
-        <location filename="itemview.ui" line="239"/>
+        <location filename="itemview.ui" line="232"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="itemview.ui" line="246"/>
+        <location filename="itemview.ui" line="239"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -281,64 +291,74 @@
 <context>
     <name>ItemViewDialog</name>
     <message>
-        <location filename="item.py" line="375"/>
+        <location filename="item.py" line="382"/>
         <source>odd</source>
         <translation>单</translation>
     </message>
     <message>
-        <location filename="item.py" line="377"/>
+        <location filename="item.py" line="384"/>
         <source>even</source>
         <translation>双</translation>
     </message>
     <message>
-        <location filename="item.py" line="379"/>
+        <location filename="item.py" line="386"/>
         <source>every</source>
         <translation>每</translation>
     </message>
     <message>
-        <location filename="item.py" line="380"/>
+        <location filename="item.py" line="387"/>
         <source>Since {}, {} month get dual phase</source>
-        <translation>从 {}, {}月 过双期</translation>
+        <translation>从 {} 开始, {}月 过双期</translation>
     </message>
     <message>
-        <location filename="item.py" line="385"/>
+        <location filename="item.py" line="392"/>
         <source>Since {} phase, rise in price {}</source>
-        <translation>从 {} 期, 涨价 {}</translation>
+        <translation>从 {} 期开始, 涨价 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="162"/>
+        <location filename="item.py" line="158"/>
         <source>No month was checked</source>
         <translation>未选择月份</translation>
     </message>
     <message>
-        <location filename="item.py" line="214"/>
+        <location filename="item.py" line="202"/>
         <source>No amount was input</source>
         <translation>未输入金额</translation>
     </message>
     <message>
-        <location filename="item.py" line="168"/>
+        <location filename="item.py" line="164"/>
         <source>Duplicate date</source>
         <translation>重复日期</translation>
     </message>
     <message>
-        <location filename="item.py" line="276"/>
+        <location filename="item.py" line="256"/>
         <source>Duplicate phase</source>
         <translation>重复期</translation>
     </message>
     <message>
-        <location filename="item.py" line="350"/>
+        <location filename="item.py" line="332"/>
         <source>Exceed quantity</source>
         <translation>超过名数</translation>
     </message>
     <message>
-        <location filename="item.py" line="390"/>
+        <location filename="item.py" line="397"/>
         <source>At {} phase, cash out {}</source>
         <translation>第 {} 期, 取现 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="435"/>
+        <location filename="item.py" line="356"/>
         <source>Continue to delete {}?</source>
         <translation>继续删除 {} ?</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="297"/>
+        <source>Edit</source>
+        <translation>编辑</translation>
+    </message>
+    <message>
+        <location filename="item.py" line="300"/>
+        <source>Delete</source>
+        <translation>删除</translation>
     </message>
 </context>
 </TS>

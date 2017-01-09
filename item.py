@@ -17,7 +17,7 @@ from PyQt5.QtCore import Qt, QCoreApplication, QDate
 from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, \
                              QFormLayout, QWidget, QLabel, QGroupBox, \
                              QSpinBox, QLineEdit, QHeaderView, QTreeWidgetItem, \
-                             QMessageBox)
+                             QAction, QMessageBox)
 from PyQt5.QtGui import QIntValidator
 
 from ui_itemview import *
@@ -125,10 +125,6 @@ class ItemDualPhaseNewDialog(QDialog):
         
         self.dualPhaseEdit = dualPhaseEdit
         self.loadDualPhase()
-        self.dualPhaseDeleted = False
-        if dualPhaseEdit is None:
-            self.ui.deletePushButton.setVisible(False)
-        self.ui.deletePushButton.pressed.connect(self.onDelete)
         self.ui.savePushButton.pressed.connect(self.onAccepted)
         self.ui.cancelPushButton.pressed.connect(self.reject)
     
@@ -167,23 +163,19 @@ class ItemDualPhaseNewDialog(QDialog):
             if dp["date"] == self.getDualPhase()["date"] and self.dualPhaseEdit is None:
                 QMessageBox.warning(self, "", _translate("ItemViewDialog", "Duplicate date"))
                 return
-
+        
         if self.dualPhaseEdit is not None:
             dualPhase.remove(self.dualPhaseEdit)
-        if self.dualPhaseDeleted == False:
-            dualPhase.append(self.getDualPhase())
+        dualPhase.append(self.getDualPhase())
         self.item.setDualPhase(dualPhase)
         self.accept()
-    
-    def onDelete(self):
-        self.dualPhaseDeleted = True
-        self.onAccepted()
 
 class ItemMarkupNewDialog(QDialog):
     def __init__(self, item, markupEdit, parent=None):
         super(ItemMarkupNewDialog, self).__init__(parent)
         self.ui = Ui_ItemPhaseView()
         self.ui.setupUi(self)
+        self.setWindowTitle(_translate("ItemPhaseView", "New Markup"))
         
         self.item = item
         
@@ -192,10 +184,6 @@ class ItemMarkupNewDialog(QDialog):
         
         self.markupEdit = markupEdit
         self.loadMarkupEdit()
-        self.markupDeleted = False
-        if markupEdit is None:
-            self.ui.deletePushButton.setVisible(False)
-        self.ui.deletePushButton.pressed.connect(self.onDelete)
         self.ui.savePushButton.pressed.connect(self.onAccepted)
         self.ui.cancelPushButton.pressed.connect(self.reject)
     
@@ -223,20 +211,16 @@ class ItemMarkupNewDialog(QDialog):
         
         if self.markupEdit is not None:
             markup.remove(self.markupEdit)
-        if self.markupDeleted == False:
-            markup.append(self.getMarkup())
+        markup.append(self.getMarkup())
         self.item.setMarkup(markup)
         self.accept()
-        
-    def onDelete(self):
-        self.markupDeleted = True
-        self.onAccepted()
 
 class ItemCashOutNewDialog(QDialog):
     def __init__(self, item, cashOutEdit, parent=None):
         super(ItemCashOutNewDialog, self).__init__(parent)
         self.ui = Ui_ItemPhaseView()
         self.ui.setupUi(self)
+        self.setWindowTitle(_translate("ItemPhaseView", "New Cash Out"))
         
         self.item = item
         
@@ -247,10 +231,6 @@ class ItemCashOutNewDialog(QDialog):
         
         self.cashOutEdit = cashOutEdit
         self.loadCashOutEdit()
-        self.cashOutDeleted = False
-        if cashOutEdit is None:
-            self.ui.deletePushButton.setVisible(False)
-        self.ui.deletePushButton.pressed.connect(self.onDelete)
         self.ui.savePushButton.pressed.connect(self.onAccepted)
         self.ui.cancelPushButton.pressed.connect(self.reject)
     
@@ -278,14 +258,9 @@ class ItemCashOutNewDialog(QDialog):
         
         if self.cashOutEdit is not None:
             cashOut.remove(self.cashOutEdit)
-        if self.cashOutDeleted == False:
-            cashOut.append(self.getCashOut())
+        cashOut.append(self.getCashOut())
         self.item.setCashOut(cashOut)
         self.accept()
-        
-    def onDelete(self):
-        self.cashOutDeleted = True
-        self.onAccepted()
 
 class TreeWidgetItem (QTreeWidgetItem):
     Category = Enum('Category', 'dualphase markup cashout')
@@ -318,6 +293,13 @@ class ItemViewDialog(QDialog):
         self.ui.infoTreeWidget.setColumnCount(1)
         self.ui.infoTreeWidget.header().setVisible(False)
         self.ui.infoTreeWidget.itemDoubleClicked.connect(self.infoEdit)
+        self.ui.infoTreeWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
+        editAction = QAction(_translate("ItemViewDialog", "Edit"), self.ui.infoTreeWidget)
+        editAction.triggered.connect(self.infoContextMenuEditAction)
+        self.ui.infoTreeWidget.addAction(editAction)
+        deleteAction = QAction(_translate("ItemViewDialog", "Delete"), self.ui.infoTreeWidget)
+        deleteAction.triggered.connect(self.infoContextMenuDeleteAction)
+        self.ui.infoTreeWidget.addAction(deleteAction)
         
         self.ui.cancelPushButton.pressed.connect(self.onRejected)
         
@@ -361,6 +343,31 @@ class ItemViewDialog(QDialog):
             self.markupNew(item.getData())
         else: # category == TreeWidgetItem.Category.cashout:
             self.cashOutNew(item.getData())
+    
+    def infoContextMenuEditAction(self):
+        selectedItems = self.ui.infoTreeWidget.selectedItems()
+        if len(selectedItems) > 0:
+            self.infoEdit(selectedItems[0], 0)
+    
+    def infoContextMenuDeleteAction(self):
+        selectedItems = self.ui.infoTreeWidget.selectedItems()
+        if len(selectedItems) > 0:
+            item = selectedItems[0]
+            if QMessageBox.question(self, "", _translate("ItemViewDialog", "Continue to delete {}?").format(item.text(0))) == QMessageBox.Yes:
+                category = item.getCategory()
+                if category == TreeWidgetItem.Category.dualphase:
+                    data = self.item.getDualPhase()
+                    data.remove(item.getData())
+                    self.item.setDualPhase(data)
+                elif category == TreeWidgetItem.Category.markup:
+                    data = self.item.getMarkup()
+                    data.remove(item.getData())
+                    self.item.setMarkup(data)
+                else: # category == TreeWidgetItem.Category.cashout:
+                    data = self.item.getCashOut()
+                    data.remove(item.getData())
+                    self.item.setCashOut(data)
+                self.loadInformation()
     
     def onRejected(self):
         if session.dirty:
@@ -424,19 +431,10 @@ class ItemViewDialog(QDialog):
 class ItemEditDialog(ItemViewDialog):
     def __init__(self, id, parent=None):
         super(ItemEditDialog, self).__init__(parent)
-        self.ui.deletePushButton.pressed.connect(self.onDelete)
         self.ui.savePushButton.pressed.connect(self.onAccepted)
         
-        self.deleteItem = False
         self.item = session.query(ItemModel).filter_by(id = id).one()
         self.loadItem()
-    
-    def onDelete(self):
-        if QMessageBox.question(self, "", _translate("ItemViewDialog", "Continue to delete {}?").format(self.item.name)) == QMessageBox.Yes:
-            self.deleteItem = True
-            session.delete(self.item)
-            session.commit()
-            self.accept()
     
     def onAccepted(self):
         self.saveItem()
@@ -446,7 +444,6 @@ class ItemEditDialog(ItemViewDialog):
 class ItemNewDialog(ItemViewDialog):
     def __init__(self, parent=None):
         super(ItemNewDialog, self).__init__(parent)
-        self.ui.deletePushButton.setVisible(False)
         self.ui.savePushButton.pressed.connect(self.onAccept)
     
     def onAccept(self):
