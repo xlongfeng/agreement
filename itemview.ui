@@ -56,11 +56,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="checkinLineEdit">
-           <property name="text">
-            <string>400</string>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="checkinLineEdit"/>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label">
@@ -91,9 +87,6 @@
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text">
-            <string>600</string>
-           </property>
           </widget>
          </item>
          <item row="1" column="0">
@@ -104,11 +97,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="checkoutLineEdit">
-           <property name="text">
-            <string>600</string>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="checkoutLineEdit"/>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_7">

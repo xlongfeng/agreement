@@ -4,10 +4,12 @@ TEMPLATE = app
 
 SOURCES += \
     contract.pyw \
+    database.py \
     item.py
 
 FORMS += \
     contract.ui \
+    databaseview.ui \
     itemview.ui \
     itemphaseview.ui \
     itemdualphasenewview.ui

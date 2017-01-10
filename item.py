@@ -14,19 +14,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.automap import automap_base
 
 from PyQt5.QtCore import Qt, QCoreApplication, QDate
-from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QVBoxLayout, \
-                             QFormLayout, QWidget, QLabel, QGroupBox, \
-                             QSpinBox, QLineEdit, QHeaderView, QTreeWidgetItem, \
+from PyQt5.QtWidgets import (QDialog, QHeaderView, QTreeWidgetItem, \
                              QAction, QMessageBox)
 from PyQt5.QtGui import QIntValidator
 
+from database import *
 from ui_itemview import *
 from ui_itemphaseview import *
 from ui_itemdualphasenewview import *
 
 _translate = QCoreApplication.translate
-
-Base = declarative_base()
 
 def qdate_to_date(qdate):
     return datetime.strptime(qdate.toString("yyyy-MM-dd"), "%Y-%m-%d").date()
@@ -92,11 +89,6 @@ class ItemModel(Base):
     
     def setDualPhase(self, dualPhase):
         self.dualPhase = json.dumps(dualPhase)
-
-engine = create_engine('sqlite:///storage.sqlite')
-Base.metadata.create_all(engine)
-
-session = sessionmaker(engine)()
 
 class ItemDualPhaseNewDialog(QDialog):
     def __init__(self, item, dualPhaseEdit, parent=None):
@@ -277,7 +269,7 @@ class TreeWidgetItem (QTreeWidgetItem):
         return self.data
 
 class ItemViewDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, id=None, parent=None):
         super(ItemViewDialog, self).__init__(parent)
         self.ui = Ui_ItemView()
         self.ui.setupUi(self)
@@ -303,9 +295,16 @@ class ItemViewDialog(QDialog):
         deleteAction.triggered.connect(self.infoContextMenuDeleteAction)
         self.ui.infoTreeWidget.addAction(deleteAction)
         
+        self.ui.savePushButton.pressed.connect(self.onAccepted)
         self.ui.cancelPushButton.pressed.connect(self.onRejected)
         
-        self.item = ItemModel()
+        self.id = id
+        if id != None:
+            session = Database.instance().session()
+            self.item = session.query(ItemModel).filter_by(id = id).one()
+        else:
+            self.item = ItemModel(startDate=date.today(), quantity=1, checkin=400, checkout=600, period=80)
+        self.loadItem()
     
     def checkoutEdit(self, text):
         if not self.ui.feeCustomCheckBox.isChecked():
@@ -317,18 +316,24 @@ class ItemViewDialog(QDialog):
             self.ui.feeLineEdit.setText(self.ui.checkoutLineEdit.text())
     
     def dualPhaseNew(self, dualPhaseEdit=None):
+        if not self.checkItem():
+            return
         self.saveItem()
         dialog = ItemDualPhaseNewDialog(self.item, dualPhaseEdit, self)
         if dialog.exec() == QDialog.Accepted:
             self.loadInformation()
     
     def markupNew(self, markupEdit=None):
+        if not self.checkItem():
+            return
         self.saveItem()
         dialog = ItemMarkupNewDialog(self.item, markupEdit, self)
         if dialog.exec() == QDialog.Accepted:
             self.loadInformation()
     
     def cashOutNew(self, cashOutEdit=None):
+        if not self.checkItem():
+            return
         self.saveItem()
         if cashOutEdit is None and len(self.item.getCashOut()) > self.item.quantity:
             QMessageBox.warning(self, "", _translate("ItemViewDialog", "Exceed quantity"))
@@ -371,7 +376,18 @@ class ItemViewDialog(QDialog):
                     self.item.setCashOut(data)
                 self.loadInformation()
     
+    def onAccepted(self):
+        if not self.checkItem():
+            return
+        self.saveItem()
+        session = Database.instance().session()
+        if self.id == None:
+            session.add(self.item)
+        session.commit()
+        self.accept()
+    
     def onRejected(self):
+        session = Database.instance().session()
         if session.dirty:
             session.rollback()
         self.reject()
@@ -416,6 +432,25 @@ class ItemViewDialog(QDialog):
         self.loadInformation()
         self.ui.noteTextEdit.setPlainText(self.item.note)
     
+    def checkItem(self):
+        quantity = self.ui.quantityLineEdit.text()
+        if quantity == "":
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "Quantity is not correct"))
+            return False
+        checkin = self.ui.checkinLineEdit.text()
+        if checkin == "":
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "Checkin is not correct"))
+            return False
+        checkout = self.ui.checkoutLineEdit.text()
+        if checkout == "":
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "Checkout is not correct"))
+            return False
+        period = self.ui.periodLineEdit.text()
+        if period == "":
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "Period is not correct"))
+            return False
+        return True
+    
     def saveItem(self):
         self.item.name = self.ui.nameLineEdit.text()
         self.item.startDate = qdate_to_date(self.ui.startDateEdit.date())
@@ -429,27 +464,3 @@ class ItemViewDialog(QDialog):
                 self.item.fee = int(fee)
         self.item.period = int(self.ui.periodLineEdit.text())
         self.item.note = self.ui.noteTextEdit.toPlainText()
-
-class ItemEditDialog(ItemViewDialog):
-    def __init__(self, id, parent=None):
-        super(ItemEditDialog, self).__init__(parent)
-        self.ui.savePushButton.pressed.connect(self.onAccepted)
-        
-        self.item = session.query(ItemModel).filter_by(id = id).one()
-        self.loadItem()
-    
-    def onAccepted(self):
-        self.saveItem()
-        session.commit()
-        self.accept()
-
-class ItemNewDialog(ItemViewDialog):
-    def __init__(self, parent=None):
-        super(ItemNewDialog, self).__init__(parent)
-        self.ui.savePushButton.pressed.connect(self.onAccept)
-    
-    def onAccept(self):
-        self.saveItem()
-        session.add(self.item)
-        session.commit()
-        self.accept()

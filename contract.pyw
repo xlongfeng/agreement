@@ -3,19 +3,39 @@
 
 from datetime import datetime, timedelta
 
-from PyQt5.QtCore import (Qt, QCoreApplication, QTranslator, QDate,
-                          QDateTime, QTimer)
+from PyQt5.QtCore import (Qt, QCoreApplication, QSettings,
+                          QTranslator, QDate, QDateTime, QTimer)
 from PyQt5.QtGui import QIcon, QFont, QDesktopServices
 from PyQt5.QtWidgets import (QApplication, QDialog, QMainWindow,
                              QTreeWidgetItem, QHeaderView,
                              QMessageBox)
 
+from database import *
 import contract_rc
 from ui_contract import *
 
+from database import *
 from item import *
 
 _translate = QCoreApplication.translate
+
+class Settings(QSettings):
+    pInstance = None
+    
+    def __init__(self, parent=None):
+        super(Settings, self).__init__(QDir.homePath() + "/config.ini", QSettings.IniFormat, parent)
+    
+    @classmethod
+    def instance(cls):
+        if cls.pInstance is None:
+            cls.pInstance = cls()
+        return cls.pInstance
+    
+    def getLastOpenDatabase(self):
+        return self.value("last-open-database", None)
+    
+    def setLastOpenDatabase(self, database):
+        self.setValue("last-open-database", database)
 
 class Contract(QMainWindow):
     def __init__(self, parent=None):
@@ -25,8 +45,7 @@ class Contract(QMainWindow):
         
         self.addMenus()
         
-        self.owner = QTreeWidgetItem(["xlongfeng肖龙峰"])
-        self.ui.itemTreeWidget.addTopLevelItem(self.owner)
+        self.database = None
         
         self.ui.itemTreeWidget.setHeaderLabels([_translate('Contract', "Date"), \
                                                 _translate('Contract', "Unit"), \
@@ -42,64 +61,78 @@ class Contract(QMainWindow):
         deleteAction.triggered.connect(self.itemContextMenuDeleteAction)
         self.ui.itemTreeWidget.addAction(deleteAction)
         
-        self.loadItems()
+        database = Settings.instance().getLastOpenDatabase()
+        if database != None:
+            Database.instance().open(database)
+            self.loadItems()
     
     def addMenus(self):
         menuBar = self.menuBar()
         fileMenu = menuBar.addMenu(_translate("Contract", "File"))
-        fileMenu.addAction(_translate('Contract', 'New Database'), self.newDatabase)
         fileMenu.addAction(_translate('Contract', 'Open Database'), self.openDatabase)
+        fileMenu.addAction(_translate('Contract', 'New Database'), self.newDatabase)
         fileMenu.addAction(_translate('Contract', 'Exit'), QCoreApplication.instance().quit)
         
         itemMenu = menuBar.addMenu(_translate("Contract", "Item"))
         itemMenu.addAction(_translate('Contract', 'New Item'), self.newItem)
     
     def newDatabase(self):
-        pass
+        dialog = NewDatabaseDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            self.loadItems()
     
     def openDatabase(self):
-        pass
+        dialog = OpenDatabaseDialog(self)
+        if dialog.exec() == QDialog.Accepted:
+            self.loadItems()
     
     def loadItems(self):
+        if self.database != None:
+            self.ui.itemTreeWidget.takeTopLevelItem(self.ui.itemTreeWidget.indexOfTopLevelItem(self.database))
+        Settings.instance().setLastOpenDatabase(Database.instance().name())
+        self.database = QTreeWidgetItem([Database.instance().name()])
+        self.ui.itemTreeWidget.addTopLevelItem(self.database)
+        session = Database.instance().session()
         for item in session.query(ItemModel).order_by(desc(ItemModel.startDate)):
-            self.owner.addChild(QTreeWidgetItem([item.startDatetoString(), str(item.quantity) \
+            self.database.addChild(QTreeWidgetItem([item.startDatetoString(), str(item.quantity) \
                                                  , item.name, str(item.id)]))
-        self.owner.setExpanded(True)
+        self.database.setExpanded(True)
     
     def newItem(self):
-        dialog = ItemNewDialog(self)
+        dialog = ItemViewDialog(None, self)
         if dialog.exec() == QDialog.Accepted:
             item = dialog.item
-            self.owner.addChild(QTreeWidgetItem([item.startDatetoString(), \
+            self.database.addChild(QTreeWidgetItem([item.startDatetoString(), \
                                                  str(item.quantity), \
                                                  item.name, str(item.id)]))
-            self.owner.sortChildren(0, Qt.DescendingOrder)
+            self.database.sortChildren(0, Qt.DescendingOrder)
     
     def editItem(self, treeWidgetItem, column):
-        if treeWidgetItem == self.owner:
+        if treeWidgetItem == self.database:
             return
-        dialog = ItemEditDialog(int(treeWidgetItem.text(3)), self)
+        dialog = ItemViewDialog(int(treeWidgetItem.text(3)), self)
         if dialog.exec() == QDialog.Accepted:
             item = dialog.item
             treeWidgetItem.setText(0, item.startDatetoString())
             treeWidgetItem.setText(1, str(item.quantity))
             treeWidgetItem.setText(2, str(item.name))
-            self.owner.sortChildren(0, Qt.DescendingOrder)
+            self.database.sortChildren(0, Qt.DescendingOrder)
     
     def itemContextMenuEditAction(self):
         selectedItems = self.ui.itemTreeWidget.selectedItems()
-        if len(selectedItems) > 0:
+        if len(selectedItems) > 0 and selectedItems[0] != self.database:
             self.editItem(selectedItems[0], 0)
     
     def itemContextMenuDeleteAction(self):
         selectedItems = self.ui.itemTreeWidget.selectedItems()
-        if len(selectedItems) > 0:
+        if len(selectedItems) > 0 and selectedItems[0] != self.database:
             treeWidgetItem = selectedItems[0]
             if QMessageBox.question(self, "", _translate("Contract", "Continue to delete {}?").format(treeWidgetItem.text(2))) == QMessageBox.Yes:
+                session = Database.instance().session()
                 item = session.query(ItemModel).filter_by(id = int(treeWidgetItem.text(3))).one()
                 session.delete(item)
                 session.commit()
-                self.owner.takeChild(self.owner.indexOfChild(treeWidgetItem))
+                self.database.takeChild(self.database.indexOfChild(treeWidgetItem))
 
 if __name__ == '__main__':
 
