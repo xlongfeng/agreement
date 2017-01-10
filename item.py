@@ -4,10 +4,11 @@
 from datetime import datetime, date, timedelta
 from enum import Enum
 import json
+import copy
 
 import sqlalchemy
 from sqlalchemy import (Column, ForeignKey, Integer, \
-                        String, Date, UnicodeText, \
+                        String, DateTime, Date, UnicodeText, \
                         create_engine, desc)
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -20,6 +21,7 @@ from PyQt5.QtGui import QIntValidator
 
 from database import *
 from ui_itemview import *
+from ui_itemhistoryview import *
 from ui_itemphaseview import *
 from ui_itemdualphasenewview import *
 
@@ -29,11 +31,11 @@ def qdate_to_date(qdate):
     return datetime.strptime(qdate.toString("yyyy-MM-dd"), "%Y-%m-%d").date()
 
 class ItemModel(Base):
-    __tablename__ = 'agreement_item'
+    __tablename__ = 'item_model'
     
     id = Column(Integer, primary_key=True)
-    createDate =  Column('create_date', Date)
-    writeDate =  Column('write_date', Date)
+    createDate =  Column('create_date', DateTime, default=datetime.now)
+    writeDate =  Column('write_date', DateTime, onupdate=datetime.now)
     
     name = Column('name', String)
     startDate =  Column('start_date', Date)
@@ -50,6 +52,8 @@ class ItemModel(Base):
     dualPhase = Column('dual_phase', String)
     
     note = Column('note', UnicodeText)
+    
+    histories = relationship("ItemHistoryModel")
     
     def startDatetoString(self):
         return self.startDate.strftime("%Y-%m-%d")
@@ -89,6 +93,14 @@ class ItemModel(Base):
     
     def setDualPhase(self, dualPhase):
         self.dualPhase = json.dumps(dualPhase)
+
+class ItemHistoryModel(Base):
+    __tablename__ = 'item_history_model'
+    id = Column(Integer, primary_key=True)
+    parent_id = Column(Integer, ForeignKey('item_model.id'))
+    createDate =  Column('create_date', DateTime, default=datetime.now)
+    writeDate =  Column('write_date', DateTime, default=datetime.now)
+    name = Column('name', String)
 
 class ItemDualPhaseNewDialog(QDialog):
     def __init__(self, item, dualPhaseEdit, parent=None):
@@ -254,6 +266,18 @@ class ItemCashOutNewDialog(QDialog):
         self.item.setCashOut(cashOut)
         self.accept()
 
+class ItemHistoryDialog(QDialog):
+    def __init__(self, item, parent=None):
+        super(ItemHistoryDialog, self).__init__(parent)
+        self.ui = Ui_ItemHistoryView()
+        self.ui.setupUi(self)
+        self.ui.treeWidget.header().setSectionResizeMode(QHeaderView.ResizeToContents)
+        topItem = QTreeWidgetItem([item.name])
+        self.ui.treeWidget.addTopLevelItem(topItem)
+        for history in item.histories:
+            topItem.addChild(QTreeWidgetItem([history.createDate.strftime("%Y-%m-%d %H:%M:%S"), history.name]))
+        topItem.setExpanded(True)
+
 class TreeWidgetItem (QTreeWidgetItem):
     Category = Enum('Category', 'dualphase markup cashout')
     
@@ -295,6 +319,7 @@ class ItemViewDialog(QDialog):
         deleteAction.triggered.connect(self.infoContextMenuDeleteAction)
         self.ui.infoTreeWidget.addAction(deleteAction)
         
+        self.ui.historyPushButton.pressed.connect(self.onHistoryView)
         self.ui.savePushButton.pressed.connect(self.onAccepted)
         self.ui.cancelPushButton.pressed.connect(self.onRejected)
         
@@ -303,7 +328,9 @@ class ItemViewDialog(QDialog):
             session = Database.instance().session()
             self.item = session.query(ItemModel).filter_by(id = id).one()
         else:
+            self.ui.historyPushButton.setVisible(False)
             self.item = ItemModel(startDate=date.today(), quantity=1, checkin=400, checkout=600, period=80)
+        self.itemCopyed = copy.deepcopy(self.item)
         self.loadItem()
     
     def checkoutEdit(self, text):
@@ -376,11 +403,15 @@ class ItemViewDialog(QDialog):
                     self.item.setCashOut(data)
                 self.loadInformation()
     
+    def onHistoryView(self):
+        ItemHistoryDialog(self.item, self).exec()
+    
     def onAccepted(self):
         if not self.checkItem():
             return
         self.saveItem()
         session = Database.instance().session()
+        self.createHistory()
         if self.id == None:
             session.add(self.item)
         session.commit()
@@ -433,6 +464,10 @@ class ItemViewDialog(QDialog):
         self.ui.noteTextEdit.setPlainText(self.item.note)
     
     def checkItem(self):
+        name = self.ui.nameLineEdit.text()
+        if name == "":
+            QMessageBox.warning(self, "", _translate("ItemViewDialog", "Name is not correct"))
+            return False
         quantity = self.ui.quantityLineEdit.text()
         if quantity == "":
             QMessageBox.warning(self, "", _translate("ItemViewDialog", "Quantity is not correct"))
@@ -464,3 +499,32 @@ class ItemViewDialog(QDialog):
                 self.item.fee = int(fee)
         self.item.period = int(self.ui.periodLineEdit.text())
         self.item.note = self.ui.noteTextEdit.toPlainText()
+    
+    def createHistory(self):
+        if self.id == None:
+            self.item.histories.append(ItemHistoryModel(name="Create item {}".format(self.item.name)))
+        else:
+            item = self.item
+            itemCopyed = self.itemCopyed
+            if item.name != itemCopyed.name:
+                self.item.histories.append(ItemHistoryModel(name="Change name {} to {}".format(itemCopyed.name, item.name)))
+            if item.startDate != itemCopyed.startDate:
+                self.item.histories.append(ItemHistoryModel(name="Change startDate {} to {}".format(itemCopyed.startDate, item.startDate)))
+            if item.quantity != itemCopyed.quantity:
+                self.item.histories.append(ItemHistoryModel(name="Change quantity {} to {}".format(itemCopyed.quantity, item.quantity)))
+            if item.checkin != itemCopyed.checkin:
+                self.item.histories.append(ItemHistoryModel(name="Change checkin {} to {}".format(itemCopyed.checkin, item.checkin)))
+            if item.checkout != itemCopyed.checkout:
+                self.item.histories.append(ItemHistoryModel(name="Change checkout {} to {}".format(itemCopyed.checkout, item.checkout)))
+            if item.fee != itemCopyed.fee:
+                self.item.histories.append(ItemHistoryModel(name="Change fee {} to {}".format(itemCopyed.fee, item.fee)))
+            if item.period != itemCopyed.period:
+                self.item.histories.append(ItemHistoryModel(name="Change period {} to {}".format(itemCopyed.period, item.period)))
+            if item.markup != itemCopyed.markup:
+                self.item.histories.append(ItemHistoryModel(name="Change markup {} to {}".format(itemCopyed.markup, item.markup)))
+            if item.cashOut != itemCopyed.cashOut:
+                self.item.histories.append(ItemHistoryModel(name="Change cashOut {} to {}".format(itemCopyed.cashOut, item.cashOut)))
+            if item.dualPhase != itemCopyed.dualPhase:
+                self.item.histories.append(ItemHistoryModel(name="Change dualPhase {} to {}".format(itemCopyed.dualPhase, item.dualPhase)))
+            if item.note != itemCopyed.note:
+                self.item.histories.append(ItemHistoryModel(name="Change note {} to {}".format(itemCopyed.note, item.note)))

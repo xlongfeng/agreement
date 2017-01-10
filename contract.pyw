@@ -23,7 +23,7 @@ class Settings(QSettings):
     pInstance = None
     
     def __init__(self, parent=None):
-        super(Settings, self).__init__(QDir.homePath() + "/config.ini", QSettings.IniFormat, parent)
+        super(Settings, self).__init__("config.ini", QSettings.IniFormat, parent)
     
     @classmethod
     def instance(cls):
@@ -62,7 +62,7 @@ class Contract(QMainWindow):
         self.ui.itemTreeWidget.addAction(deleteAction)
         
         database = Settings.instance().getLastOpenDatabase()
-        if database != None:
+        if database is not None and Database.instance().isExist(database):
             Database.instance().open(database)
             self.loadItems()
     

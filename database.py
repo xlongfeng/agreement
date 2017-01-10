@@ -42,6 +42,9 @@ class Database(QObject):
     
     def session(self):
         return self._session
+    
+    def isExist(self, name):
+        return QFileInfo.exists("{}.sqlite".format(name))
 
 class DatabaseDialog(QDialog):
     def __init__(self, parent=None):
@@ -56,9 +59,6 @@ class DatabaseDialog(QDialog):
         dir = QDir(".")
         for entry in dir.entryInfoList(["*.sqlite"], QDir.Files):
             self.ui.databaseListWidget.addItem(entry.baseName())
-    
-    def isExist(self, name):
-        return QFileInfo.exists("{}.sqlite".format(name))
 
 class NewDatabaseDialog(DatabaseDialog):
     def __init__(self, parent=None):
@@ -70,7 +70,7 @@ class NewDatabaseDialog(DatabaseDialog):
         name = self.ui.databaseLineEdit.text()
         if name == "":
             pass
-        elif self.isExist(name):
+        elif Database.instance().isExist(name):
             QMessageBox.warning(self, "", _translate("DatabaseDialog", "Existing {} Database").format(name))
         else:
             Database.instance().open(name)

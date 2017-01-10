@@ -11,6 +11,7 @@ FORMS += \
     contract.ui \
     databaseview.ui \
     itemview.ui \
+    itemhistoryview.ui \
     itemphaseview.ui \
     itemdualphasenewview.ui
 	
