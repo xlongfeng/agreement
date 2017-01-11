@@ -1,8 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file>images/contract.png</file>
+  <file>contract_zh_CN.qm</file>
   <file>css/asciidoctor.css</file>
   <file>css/default.css</file>
+  <file>images/contract.ico</file>
+  <file>templates/item.html</file>
 </qresource>
 </RCC>
 

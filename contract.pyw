@@ -70,13 +70,14 @@ class Contract(QMainWindow):
     
     def addMenus(self):
         menuBar = self.menuBar()
-        fileMenu = menuBar.addMenu(_translate("Contract", "File"))
-        fileMenu.addAction(_translate('Contract', 'Open Database'), self.openDatabase)
-        fileMenu.addAction(_translate('Contract', 'New Database'), self.newDatabase)
-        fileMenu.addAction(_translate('Contract', 'Exit'), QCoreApplication.instance().quit)
+        self.fileMenu = menuBar.addMenu(_translate("Contract", "File"))
+        self.fileMenu.addAction(_translate('Contract', 'Open Database'), self.openDatabase)
+        self.fileMenu.addAction(_translate('Contract', 'New Database'), self.newDatabase)
+        self.fileMenu.addAction(_translate('Contract', 'Exit'), QCoreApplication.instance().quit)
         
-        itemMenu = menuBar.addMenu(_translate("Contract", "Item"))
-        itemMenu.addAction(_translate('Contract', 'New Item'), self.newItem)
+        self.itemMenu = menuBar.addMenu(_translate("Contract", "Item"))
+        self.itemMenu.addAction(_translate('Contract', 'New Item'), self.newItem)
+        self.itemMenu.setDisabled(True)
     
     def newDatabase(self):
         dialog = NewDatabaseDialog(self)
@@ -99,6 +100,7 @@ class Contract(QMainWindow):
             self.database.addChild(QTreeWidgetItem([item.startDatetoString(), str(item.quantity) \
                                                  , item.name, str(item.id)]))
         self.database.setExpanded(True)
+        self.itemMenu.setEnabled(True)
     
     def newItem(self):
         dialog = ItemViewDialog(None, self)
@@ -149,14 +151,14 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     
-    app.setWindowIcon(QIcon(':/images/contract.png'))
+    app.setWindowIcon(QIcon(':/images/contract.ico'))
     
     font = app.font()  
     font.setPointSize(10)
     app.setFont(font)
     
     translator = QTranslator(app)
-    translator.load('Contract_zh_CN')
+    translator.load(':/contract_zh_CN')
     app.installTranslator(translator)
     
     contract = Contract()

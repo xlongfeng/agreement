@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from os import path
 from datetime import datetime, date
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, BaseLoader, FileSystemLoader, TemplateNotFound
+
+from PyQt5.QtCore import QIODevice, QFile
 
 from database import *
 from item import ItemModel
@@ -14,6 +17,19 @@ LEAP_MONTH = {
     2066: 5, 2069: 4, 2071: 8, 2074: 6, 2077: 4, 2080: 3, 2082: 7, 2085: 5,
     2088: 4, 2090: 8, 2093: 6, 2096: 4, 2099: 2,
 }
+
+class QFileLoader(BaseLoader):
+    def __init__(self, path):
+        self.path = path
+    
+    def get_source(self, environment, template):
+        filename = path.join(self.path, template)
+        file = QFile(filename)
+        if not file.exists():
+            raise TemplateNotFound(template)
+        file.open(QIODevice.ReadOnly)
+        source = file.readAll().data().decode('utf-8')
+        return source, filename, lambda: True
 
 class Accrediting:
     def __init__(self, id):
@@ -136,6 +152,7 @@ class Accrediting:
             # 到达最后一期, 跳出循环
             if phase == period:
                 break
-        env = Environment(loader=FileSystemLoader('.'))
-        template = env.get_template('item-template.html')
+        # env = Environment(loader=FileSystemLoader('templates'))
+        env = Environment(loader=QFileLoader(':/templates'))
+        template = env.get_template('item.html')
         return template.render(bill = bill)
