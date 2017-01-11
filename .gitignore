@@ -95,9 +95,6 @@ ENV/
 ui_*.py
 *_rc.py
 
-# Asciidoctor
-*.html
-
 # Application
 *.ini
 *.sqlite

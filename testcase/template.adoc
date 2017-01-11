@@ -1,16 +1,12 @@
 = 肖龙峰会子统计
-:toc: left
 :table-caption!:
 
-:sectnums:
-
-== 会子明细
 {% for bill in bills %}
-=== {{ bill.name }} {{ bill.startdate }} 总{{ bill.quantity }}名 死期{{ bill.cash }}名
+=== {{ bill.name }}
 [%autowidth, options="header"]
 |===
-| 日期 | 死期/名数 | 会头钱 | 活期金额 | 死期金额 | 备注
-| {{ bill.startdate }} | {{ bill.cash }}/{{ bill.quantity }} | {{ bill.tip }} | {{ bill.checkin }} | {{ bill.checkout }}
+| 日期 | 死期 | 名数 | 会头钱 | 活期金额 | 死期金额 | 备注
+| {{ bill.startdate }} | {{ bill.cash }} | {{ bill.quantity }} | {{ bill.tip }} | {{ bill.checkin }} | {{ bill.checkout }}
 a| {% for note in bill.notes %}
 - {{ note }} {% endfor %}
 |===

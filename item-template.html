@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.5">
+<title>会子统计</title>
+<link rel="stylesheet" href="css/default.css">
+<link rel="stylesheet" href="css/asciidoctor.css">
+<style type="text/css">
+.sect2{width:1440px}
+</style>
+</head>
+<body class="article">
+<div id="content">
+<div class="sect2">
+<h3 id="_{{ bill.name }}">{{ bill.name }}</h3>
+<table class="tableblock frame-all grid-all">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">日期</th>
+<th class="tableblock halign-left valign-top">名数</th>
+<th class="tableblock halign-left valign-top">死期</th>
+<th class="tableblock halign-left valign-top">会头钱</th>
+<th class="tableblock halign-left valign-top">活期金额</th>
+<th class="tableblock halign-left valign-top">死期金额</th>
+<th class="tableblock halign-left valign-top">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.startdate }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.quantity }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.cashOut }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.fee }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.checkin }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.checkout }}</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+
+{% for detail in bill.details %}
+<table class="tableblock frame-all grid-all">
+<caption class="title">{{ detail.year }} 年, 总金额 {{ detail.totalamount }} 元, 期数 {{ detail.totalperiod }}</caption>
+<colgroup>
+{% for month in detail.month %}
+<col>
+{% endfor %}
+</colgroup>
+<tbody>
+
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph"><strong>月份</strong></div></div></td>
+{% for month in detail.month %}
+<td class="tableblock halign-left valign-top">{{ month.month }}{% if month.type == 1 %}<sup>双</sup>{% endif %}{% if month.type == 2 %}<sup><mark>闰</mark></sup>{% endif %}</td>
+{% endfor %}
+</tr>
+
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph"><strong>期数</strong></div></div></td>
+{% for phase in detail.phase %}
+<td class="tableblock halign-left valign-top">{{ phase.phase }}{% if phase.markup == True %}<sup><mark>涨</mark></sup>{% endif %}{% if phase.cashout == True %}<phaseTypephaseType><sub><mark>取</mark></sub>{% endif %}</td>
+{% endfor %}
+</tr>
+
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph"><strong>金额</strong></div></div></td>
+{% for amount in detail.amount %}
+<td class="tableblock halign-left valign-top">{{ amount }}</td>
+{% endfor %}
+</tr>
+
+</tbody>
+</table>
+{% endfor %}
+
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-01-10 11:39:25 China Standard Time
+</div>
+</div>
+</body>
+</html>

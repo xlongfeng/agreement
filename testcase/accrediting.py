@@ -20,8 +20,7 @@ sampleItems = [
                 "rule": [1, 3, 5, 7, 9, 11] # 规则
             },
             {
-                "year": 2013,
-                "month": 1,
+                "date": date(2013, 1, 1),
                 "rule": [4, 8, 12]
             },
         ],
@@ -168,7 +167,7 @@ class Accrediting:
 
 if __name__ == "__main__":
     accrediting = Accrediting(sampleItems)
-    accrediting = Accrediting(huizi)
+    # accrediting = Accrediting(huizi)
     with open("accrediting.adoc", "w", encoding="utf8") as f:
         adoc = accrediting.adoc()
         # print(adoc)

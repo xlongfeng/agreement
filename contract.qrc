@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file>images/contract.png</file>
+  <file>css/asciidoctor.css</file>
+  <file>css/default.css</file>
 </qresource>
 </RCC>
 

@@ -47,8 +47,13 @@ class ItemModel(Base):
     
     period = Column('period', Integer)
     
+    # [dict(phase=phase, amount=amount)]
     markup = Column('markup', String)
+    
+    # [cashOut]
     cashOut = Column('cash_out', String)
+    
+    # [dict(date=date, months=[month])]
     dualPhase = Column('dual_phase', String)
     
     note = Column('note', UnicodeText)

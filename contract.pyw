@@ -3,7 +3,7 @@
 
 from datetime import datetime, timedelta
 
-from PyQt5.QtCore import (Qt, QCoreApplication, QSettings,
+from PyQt5.QtCore import (Qt, QCoreApplication, QSettings, QUrl,
                           QTranslator, QDate, QDateTime, QTimer)
 from PyQt5.QtGui import QIcon, QFont, QDesktopServices
 from PyQt5.QtWidgets import (QApplication, QDialog, QMainWindow,
@@ -16,6 +16,7 @@ from ui_contract import *
 
 from database import *
 from item import *
+from accrediting import *
 
 _translate = QCoreApplication.translate
 
@@ -52,6 +53,7 @@ class Contract(QMainWindow):
                                                 _translate('Contract', "Name")])
         self.ui.itemTreeWidget.header().resizeSection(0, 128)
         self.ui.itemTreeWidget.header().resizeSection(1, 32)
+        self.ui.itemTreeWidget.itemClicked.connect(self.viewItemDetail)
         self.ui.itemTreeWidget.itemDoubleClicked.connect(self.editItem)
         self.ui.itemTreeWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
         editAction = QAction(_translate("Contract", "Edit"), self.ui.itemTreeWidget)
@@ -107,6 +109,12 @@ class Contract(QMainWindow):
                                                  item.name, str(item.id)]))
             self.database.sortChildren(0, Qt.DescendingOrder)
     
+    def viewItemDetail(self, treeWidgetItem, column):
+        if treeWidgetItem == self.database:
+            pass
+        else:
+            self.ui.detailWebView.setHtml(Accrediting(int(treeWidgetItem.text(3))).toHtml(), QUrl('qrc:///'))
+    
     def editItem(self, treeWidgetItem, column):
         if treeWidgetItem == self.database:
             return
@@ -117,6 +125,7 @@ class Contract(QMainWindow):
             treeWidgetItem.setText(1, str(item.quantity))
             treeWidgetItem.setText(2, str(item.name))
             self.database.sortChildren(0, Qt.DescendingOrder)
+            self.viewItemDetail(treeWidgetItem, 0)
     
     def itemContextMenuEditAction(self):
         selectedItems = self.ui.itemTreeWidget.selectedItems()
