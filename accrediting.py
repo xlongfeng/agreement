@@ -109,7 +109,7 @@ class Accrediting:
             name = item.name,
             quantity = quantity,
             cashOut = len(item.getCashOut()),
-            startdate = startdate,
+            startdate = item.startDatetoString(),
             fee = fee,
             checkin = checkin,
             checkout = checkout,

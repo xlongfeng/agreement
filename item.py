@@ -7,7 +7,7 @@ import json
 import copy
 
 import sqlalchemy
-from sqlalchemy import (Column, ForeignKey, Integer, \
+from sqlalchemy import (Column, ForeignKey, Integer, Boolean, \
                         String, DateTime, Date, UnicodeText, \
                         create_engine, desc)
 from sqlalchemy.orm import relationship, sessionmaker
@@ -35,10 +35,11 @@ class ItemModel(Base):
     
     id = Column(Integer, primary_key=True)
     createDate =  Column('create_date', DateTime, default=datetime.now)
-    writeDate =  Column('write_date', DateTime, onupdate=datetime.now)
+    writeDate =  Column('write_date', DateTime, default=datetime.now, onupdate=datetime.now)
     
     name = Column('name', String)
     startDate =  Column('start_date', Date)
+    startDateLeapMonth =  Column('start_date_leap_month', Boolean, default=False)
     quantity = Column('quantity', Integer)
     
     checkin = Column('checkin', Integer)
@@ -61,7 +62,7 @@ class ItemModel(Base):
     histories = relationship("ItemHistoryModel")
     
     def startDatetoString(self):
-        return self.startDate.strftime("%Y-%m-%d")
+        return _translate("ItemViewDialog", "{}/{}").format(self.startDate.year, self.startDate.month)
 
     def getMarkup(self):
         if self.markup is not None and self.markup != "":
@@ -334,7 +335,8 @@ class ItemViewDialog(QDialog):
             self.item = session.query(ItemModel).filter_by(id = id).one()
         else:
             self.ui.historyPushButton.setVisible(False)
-            self.item = ItemModel(startDate=date.today(), quantity=1, checkin=400, checkout=600, period=80)
+            today = date.today()
+            self.item = ItemModel(startDate=date(today.year, today.month, 1), quantity=1, checkin=400, checkout=600, period=80)
         self.itemCopyed = copy.deepcopy(self.item)
         self.loadItem()
     
@@ -507,29 +509,29 @@ class ItemViewDialog(QDialog):
     
     def createHistory(self):
         if self.id == None:
-            self.item.histories.append(ItemHistoryModel(name="Create item {}".format(self.item.name)))
+            self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Create item {}").format(self.item.name)))
         else:
             item = self.item
             itemCopyed = self.itemCopyed
             if item.name != itemCopyed.name:
-                self.item.histories.append(ItemHistoryModel(name="Change name {} to {}".format(itemCopyed.name, item.name)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change name {} to {}").format(itemCopyed.name, item.name)))
             if item.startDate != itemCopyed.startDate:
-                self.item.histories.append(ItemHistoryModel(name="Change startDate {} to {}".format(itemCopyed.startDate, item.startDate)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change startDate {} to {}").format(itemCopyed.startDate, item.startDate)))
             if item.quantity != itemCopyed.quantity:
-                self.item.histories.append(ItemHistoryModel(name="Change quantity {} to {}".format(itemCopyed.quantity, item.quantity)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change quantity {} to {}").format(itemCopyed.quantity, item.quantity)))
             if item.checkin != itemCopyed.checkin:
-                self.item.histories.append(ItemHistoryModel(name="Change checkin {} to {}".format(itemCopyed.checkin, item.checkin)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change checkin {} to {}").format(itemCopyed.checkin, item.checkin)))
             if item.checkout != itemCopyed.checkout:
-                self.item.histories.append(ItemHistoryModel(name="Change checkout {} to {}".format(itemCopyed.checkout, item.checkout)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change checkout {} to {}").format(itemCopyed.checkout, item.checkout)))
             if item.fee != itemCopyed.fee:
-                self.item.histories.append(ItemHistoryModel(name="Change fee {} to {}".format(itemCopyed.fee, item.fee)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change fee {} to {}").format(itemCopyed.fee, item.fee)))
             if item.period != itemCopyed.period:
-                self.item.histories.append(ItemHistoryModel(name="Change period {} to {}".format(itemCopyed.period, item.period)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change period {} to {}").format(itemCopyed.period, item.period)))
             if item.markup != itemCopyed.markup:
-                self.item.histories.append(ItemHistoryModel(name="Change markup {} to {}".format(itemCopyed.markup, item.markup)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change markup {} to {}").format(itemCopyed.markup, item.markup)))
             if item.cashOut != itemCopyed.cashOut:
-                self.item.histories.append(ItemHistoryModel(name="Change cashOut {} to {}".format(itemCopyed.cashOut, item.cashOut)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change cashOut {} to {}").format(itemCopyed.cashOut, item.cashOut)))
             if item.dualPhase != itemCopyed.dualPhase:
-                self.item.histories.append(ItemHistoryModel(name="Change dualPhase {} to {}".format(itemCopyed.dualPhase, item.dualPhase)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change dualPhase {} to {}").format(itemCopyed.dualPhase, item.dualPhase)))
             if item.note != itemCopyed.note:
-                self.item.histories.append(ItemHistoryModel(name="Change note {} to {}".format(itemCopyed.note, item.note)))
+                self.item.histories.append(ItemHistoryModel(name=_translate("ItemViewDialog", "Change note {} to {}").format(itemCopyed.note, item.note)))

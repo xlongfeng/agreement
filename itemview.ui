@@ -43,6 +43,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QDateEdit" name="startDateEdit">
+           <property name="displayFormat">
+            <string>yyyy/M</string>
+           </property>
            <property name="calendarPopup">
             <bool>true</bool>
            </property>
