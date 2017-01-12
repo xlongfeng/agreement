@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from os import path
+import sys
 from datetime import datetime, date
 from jinja2 import Environment, BaseLoader, FileSystemLoader, TemplateNotFound
 
@@ -152,7 +153,9 @@ class Accrediting:
             # 到达最后一期, 跳出循环
             if phase == period:
                 break
-        # env = Environment(loader=FileSystemLoader('templates'))
-        env = Environment(loader=QFileLoader(':/templates'))
+        if "sep-rc" in sys.argv:
+            env = Environment(loader=FileSystemLoader('templates'))
+        else:
+            env = Environment(loader=QFileLoader(':/templates'))
         template = env.get_template('item.html')
         return template.render(bill = bill)

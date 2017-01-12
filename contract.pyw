@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+import sys
 from datetime import datetime, timedelta
 
 from PyQt5.QtCore import (Qt, QCoreApplication, QSettings, QUrl,
@@ -115,7 +117,10 @@ class Contract(QMainWindow):
         if treeWidgetItem == self.database:
             pass
         else:
-            self.ui.detailWebView.setHtml(Accrediting(int(treeWidgetItem.text(3))).toHtml(), QUrl('qrc:///'))
+            if "sep-rc" in sys.argv:
+                self.ui.detailWebView.setHtml(Accrediting(int(treeWidgetItem.text(3))).toHtml(), QUrl.fromLocalFile(QDir.currentPath() + "/"))
+            else:
+                self.ui.detailWebView.setHtml(Accrediting(int(treeWidgetItem.text(3))).toHtml(), QUrl('qrc:///'))
     
     def editItem(self, treeWidgetItem, column):
         if treeWidgetItem == self.database:
@@ -146,19 +151,22 @@ class Contract(QMainWindow):
                 self.database.takeChild(self.database.indexOfChild(treeWidgetItem))
 
 if __name__ == '__main__':
-
-    import sys
-
     app = QApplication(sys.argv)
     
-    app.setWindowIcon(QIcon(':/images/contract.ico'))
+    if "sep-rc" in sys.argv:
+        app.setWindowIcon(QIcon('images/contract.ico'))
+    else:
+        app.setWindowIcon(QIcon(':/images/contract.ico'))
     
     font = app.font()  
     font.setPointSize(10)
     app.setFont(font)
     
     translator = QTranslator(app)
-    translator.load(':/contract_zh_CN')
+    if "sep-rc" in sys.argv:
+        translator.load('contract_zh_CN')
+    else:
+        translator.load(':/contract_zh_CN')
     app.installTranslator(translator)
     
     contract = Contract()
