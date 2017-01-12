@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.5">
+<title>会子年度统计</title>
+<link rel="stylesheet" href="css/default.css">
+<link rel="stylesheet" href="css/asciidoctor.css">
+</head>
+<body class="article">
+<div id="content">
+<div class="sect1">
+<h2>{{ name }}会子年度统计 {{ date }}</h2>
+<div class="sectionbody">
+{% for bill in bills %}
+<div class="sect2">
+<h3>{{ bill.year }}年, 总供金额: {{bill.totalamount }}</h3>
+<table class="tableblock frame-all grid-all">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">会头</th>
+<th class="tableblock halign-left valign-top">日期</th>
+<th class="tableblock halign-left valign-top">活期</th>
+<th class="tableblock halign-left valign-top">名数</th>
+<th class="tableblock halign-left valign-top">期数</th>
+<th class="tableblock halign-left valign-top">未供期数</th>
+<th class="tableblock halign-left valign-top">已供期数</th>
+<th class="tableblock halign-left valign-top">已供金额</th>
+<th class="tableblock halign-left valign-top">年度供金额</th>
+<th class="tableblock halign-left valign-top">完成度</th>
+</tr>
+</thead>
+<tbody>
+{% for detail in bill.details %}
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.name }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.startdate }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.checking }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.quantity }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.period }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.unfinished }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.finished }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.totalamount }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.yearamount }}</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.percent }}%</p></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endfor %}
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-01-10 11:39:25 China Standard Time
+</div>
+</div>
+</body>
+</html>

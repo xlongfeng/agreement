@@ -103,6 +103,7 @@ class Contract(QMainWindow):
                                                  , item.name, str(item.id)]))
         self.database.setExpanded(True)
         self.itemMenu.setEnabled(True)
+        self.viewItemDetail(self.database, 0)
     
     def newItem(self):
         dialog = ItemViewDialog(None, self)
@@ -114,13 +115,15 @@ class Contract(QMainWindow):
             self.database.sortChildren(0, Qt.DescendingOrder)
     
     def viewItemDetail(self, treeWidgetItem, column):
-        if treeWidgetItem == self.database:
-            pass
+        if "sep-rc" in sys.argv:
+            baseUrl =  QUrl.fromLocalFile(QDir.currentPath() + "/")
         else:
-            if "sep-rc" in sys.argv:
-                self.ui.detailWebView.setHtml(Accrediting(int(treeWidgetItem.text(3))).toHtml(), QUrl.fromLocalFile(QDir.currentPath() + "/"))
-            else:
-                self.ui.detailWebView.setHtml(Accrediting(int(treeWidgetItem.text(3))).toHtml(), QUrl('qrc:///'))
+            baseUrl =  QUrl('qrc:///')
+        
+        if treeWidgetItem == self.database:
+            self.ui.detailWebView.setHtml(Accrediting().toSummaryHtml(), baseUrl)
+        else:
+            self.ui.detailWebView.setHtml(Accrediting(int(treeWidgetItem.text(3))).toItemHtml(), baseUrl)
     
     def editItem(self, treeWidgetItem, column):
         if treeWidgetItem == self.database:
