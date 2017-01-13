@@ -15,10 +15,9 @@
 <body class="article">
 <div id="content">
 <div class="sect2">
-<h3>会头:{{ bill.name }}</h3>
+<h3>{{ bill.startdate }} {{ bill.name }}</h3>
 <table class="tableblock frame-all grid-all">
 <colgroup>
-<col>
 <col>
 <col>
 <col>
@@ -28,31 +27,34 @@
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">日期</th>
+<th class="tableblock halign-left valign-top">活期</th>
 <th class="tableblock halign-left valign-top">名数</th>
-<th class="tableblock halign-left valign-top">死期</th>
+<th class="tableblock halign-left valign-top">期数</th>
 <th class="tableblock halign-left valign-top">会头钱</th>
 <th class="tableblock halign-left valign-top">活期金额</th>
 <th class="tableblock halign-left valign-top">死期金额</th>
-<th class="tableblock halign-left valign-top">备注</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.startdate }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.quantity }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.cashOut }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.fee }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.checkin }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ bill.checkout }}</p></td>
+<td class="tableblock halign-left valign-top">{{ bill.startdate }}</td>
+<td class="tableblock halign-left valign-top">{{ bill.quantity }}</td>
+<td class="tableblock halign-left valign-top">{{ bill.cashOut }}</td>
+<td class="tableblock halign-left valign-top">{{ bill.fee }}</td>
+<td class="tableblock halign-left valign-top">{{ bill.checkin }}</td>
+<td class="tableblock halign-left valign-top">{{ bill.checkout }}</td>
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
 </table>
 
+<p>
+备注 {{ bill.note }}
+</p>
+
 {% for detail in bill.details %}
 <table class="tableblock frame-all grid-all">
-<caption class="title">{{ detail.year }} 年, 总金额 {{ detail.totalamount }} 元, 期数 {{ detail.totalperiod }}</caption>
+<caption class="title">{{ detail.year }} 年, 年度金额 {{ detail.yearamount }} 元, 年度期数 {{ detail.yearperiod }}, 已供期数, 已供金额, 完成度</caption>
 <colgroup>
 {% for month in detail.month %}
 <col>

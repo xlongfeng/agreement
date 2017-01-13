@@ -119,6 +119,7 @@ class Accrediting:
             totalamount = 0
             for year in range(startdate.year, startdate.year + 15):
                 startmonth = startdate.month if year == startdate.year else 1
+                yearperiod = 0
                 yearamount = 0
                 
                 months = range(startmonth, 13)
@@ -127,9 +128,10 @@ class Accrediting:
                     amount = 0
                     for index in range(0, quantity):
                         amount += self.getAmount(phase, index, item)
+                    yearperiod += 1
                     yearamount += amount
                     phase += 1
-                    # 到达最后一期, 跳出循环
+                    # 到达最后一期, 最后一期不需要供, 跳出循环
                     if phase == period:
                         break
                 # 计算完成一年
@@ -146,6 +148,7 @@ class Accrediting:
                     unfinished = period - phase,
                     finished = phase,
                     totalamount = totalamount,
+                    yearperiod = yearperiod,
                     yearamount = yearamount,
                     percent = math.ceil(phase * 100 / period)
                 ))
@@ -157,6 +160,8 @@ class Accrediting:
         # reorder
         billList = []
         for year in sorted(bills.keys(), reverse=True):
+            if year > date.today().year + 1:
+                continue
             billList.append(bills[year])
         
         if "sep-rc" in sys.argv:
@@ -184,8 +189,8 @@ class Accrediting:
                     month: month
                     period: period list
                     amount: amount list
-                    totalamount: totalamount
-                    totalperiod: totalperiod
+                    yearamount: yearamount
+                    yearperiod: yearperiod
                 }
             ]
         }
@@ -205,7 +210,7 @@ class Accrediting:
             fee = fee,
             checkin = checkin,
             checkout = checkout,
-            notes = item.note
+            note = item.note
         )
         bill["details"] = list()
         phase = 1
@@ -216,7 +221,7 @@ class Accrediting:
             detail["month"] = []
             detail["phase"] = []
             detail["amount"] = []
-            detail["totalamount"] = 0
+            detail["yearamount"] = 0
             
             months = range(startmonth, 13)
             months = self.adjustMonth(months, year, item)
@@ -234,13 +239,13 @@ class Accrediting:
                 for index in range(0, quantity):
                     amount += self.getAmount(phase, index, item)
                 detail["amount"].append(amount)
-                detail["totalamount"] += amount
+                detail["yearamount"] += amount
                 phase += 1
-                # 到达最后一期, 跳出循环
+                # 到达最后一期, 最后一期不需要供, 跳出循环
                 if phase == period:
                     break
             # 计算完成一年
-            detail["totalperiod"] = len(detail["phase"])
+            detail["yearperiod"] = len(detail["phase"])
             bill["details"].append(detail)
             # 到达最后一期, 跳出循环
             if phase == period:

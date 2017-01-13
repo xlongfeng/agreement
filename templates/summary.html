@@ -8,6 +8,9 @@
 <title>会子年度统计</title>
 <link rel="stylesheet" href="css/default.css">
 <link rel="stylesheet" href="css/asciidoctor.css">
+<style type="text/css">
+.sect2{width:1440px}
+</style>
 </head>
 <body class="article">
 <div id="content">
@@ -28,6 +31,8 @@
 <col>
 <col>
 <col>
+<col>
+<col>
 </colgroup>
 <thead>
 <tr>
@@ -39,23 +44,25 @@
 <th class="tableblock halign-left valign-top">未供期数</th>
 <th class="tableblock halign-left valign-top">已供期数</th>
 <th class="tableblock halign-left valign-top">已供金额</th>
-<th class="tableblock halign-left valign-top">年度供金额</th>
+<th class="tableblock halign-left valign-top">年度期数</th>
+<th class="tableblock halign-left valign-top">年度金额</th>
 <th class="tableblock halign-left valign-top">完成度</th>
 </tr>
 </thead>
 <tbody>
 {% for detail in bill.details %}
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.name }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.startdate }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.checking }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.quantity }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.period }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.unfinished }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.finished }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.totalamount }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.yearamount }}</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">{{ detail.percent }}%</p></td>
+<td class="tableblock halign-left valign-top"><strong>{{ detail.name }}</strong></td>
+<td class="tableblock halign-left valign-top">{{ detail.startdate }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.checking }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.quantity }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.period }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.unfinished }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.finished }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.totalamount }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.yearperiod }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.yearamount }}</td>
+<td class="tableblock halign-left valign-top">{{ detail.percent }}%</td>
 </tr>
 {% endfor %}
 </tbody>
