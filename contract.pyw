@@ -113,6 +113,7 @@ class Contract(QMainWindow):
                                                  str(item.quantity), \
                                                  item.name, str(item.id)]))
             self.database.sortChildren(0, Qt.DescendingOrder)
+            self.viewItemDetail(self.database, 0)
     
     def viewItemDetail(self, treeWidgetItem, column):
         if "sep-rc" in sys.argv:

@@ -174,11 +174,12 @@ class Accrediting:
     def toItemHtml(self):
         '''
         bill dict map:
-        {
+        {    
             name: name
-            quantity: quantity
-            cashOut: cashOut
             startdata: startdata
+            checking: checking
+            quantity: quantity
+            period: period
             fee: fee
             checkin: checkin
             checkout: checkout
@@ -191,6 +192,9 @@ class Accrediting:
                     amount: amount list
                     yearamount: yearamount
                     yearperiod: yearperiod
+                    finished: finished
+                    totalamount: totalamount
+                    percent: percent
                 }
             ]
         }
@@ -198,15 +202,17 @@ class Accrediting:
         item = self.item
         quantity = item.quantity
         startdate = item.startDate
+        cashOut = len(item.getCashOut())
         checkin = item.checkin
         checkout = item.checkout
         period = item.period
         fee = item.fee if item.fee is not None else checkout
         bill = dict(
             name = item.name,
-            quantity = quantity,
-            cashOut = len(item.getCashOut()),
             startdate = item.startDatetoString(),
+            checking = quantity - cashOut,
+            quantity = quantity,
+            period = period,
             fee = fee,
             checkin = checkin,
             checkout = checkout,
@@ -214,6 +220,7 @@ class Accrediting:
         )
         bill["details"] = list()
         phase = 1
+        totalamount = 0
         for year in range(startdate.year, startdate.year + 15):
             startmonth = startdate.month if year == startdate.year else 1
             detail = dict()
@@ -245,7 +252,11 @@ class Accrediting:
                 if phase == period:
                     break
             # 计算完成一年
+            totalamount += detail["yearamount"]
             detail["yearperiod"] = len(detail["phase"])
+            detail["finished"] = phase
+            detail["totalamount"] = totalamount
+            detail["percent"] = math.ceil(phase * 100 / period)
             bill["details"].append(detail)
             # 到达最后一期, 跳出循环
             if phase == period:

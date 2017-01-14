@@ -37,24 +37,24 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top">{{ bill.startdate }}</td>
+<td class="tableblock halign-left valign-top">{{ bill.checking }}</td>
 <td class="tableblock halign-left valign-top">{{ bill.quantity }}</td>
-<td class="tableblock halign-left valign-top">{{ bill.cashOut }}</td>
+<td class="tableblock halign-left valign-top">{{ bill.period }}</td>
 <td class="tableblock halign-left valign-top">{{ bill.fee }}</td>
 <td class="tableblock halign-left valign-top">{{ bill.checkin }}</td>
 <td class="tableblock halign-left valign-top">{{ bill.checkout }}</td>
-<td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
 </table>
 
-<p>
-备注 {{ bill.note }}
-</p>
+<div class="listingblock">
+<div class="title">备注</div>
+<div class="content"><pre>{{ bill.note }}</pre></div>
+</div>
 
 {% for detail in bill.details %}
+<h4>{{ detail.year }} 年, 年度金额 {{ detail.yearamount }} 元, 年度期数 {{ detail.yearperiod }}, 已供期数 {{ detail.finished }}, 已供金额 {{ detail.totalamount }}, 完成度 {{ detail.percent }}%</h4>
 <table class="tableblock frame-all grid-all">
-<caption class="title">{{ detail.year }} 年, 年度金额 {{ detail.yearamount }} 元, 年度期数 {{ detail.yearperiod }}, 已供期数, 已供金额, 完成度</caption>
 <colgroup>
 {% for month in detail.month %}
 <col>
