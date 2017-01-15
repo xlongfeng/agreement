@@ -72,7 +72,7 @@
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph"><strong>期数</strong></div></div></td>
 {% for phase in detail.phase %}
-<td class="tableblock halign-left valign-top">{{ phase.phase }}{% if phase.markup == True %}<sup><mark>涨</mark></sup>{% endif %}{% if phase.cashout == True %}<phaseTypephaseType><sub><mark>克</mark></sub>{% endif %}</td>
+<td class="tableblock halign-left valign-top">{{ phase.phase }}{% if phase.markup == True %}<sup><mark>涨</mark></sup>{% endif %}{% if phase.cashout == True %}<phaseTypephaseType><sub><mark>结</mark></sub>{% endif %}</td>
 {% endfor %}
 </tr>
 

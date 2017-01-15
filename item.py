@@ -72,7 +72,6 @@ class ItemModel(Base):
         else:
             checking = self.quantity
             for cashOut in self.getCashOut():
-                print(startPhase, endPhase, cashOut)
                 if startPhase <= cashOut and cashOut <= endPhase:
                     checking -= 1
                 elif startPhase > cashOut:
