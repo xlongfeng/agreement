@@ -65,20 +65,6 @@ class Accrediting:
                 _months.append(dict(month=month, type=2)) # 闰
         return _months
     
-    def getAmount(self, phase, index, item):
-        amount = item.checkin
-        
-        for markup in item.getMarkup():
-            if phase >= markup["phase"]: # 涨价
-                amount += markup["amount"]
-        
-        cashOut = item.getCashOut()
-        if index < len(cashOut): # 已取现
-            cachPhase = cashOut[index]
-            if phase >= cachPhase:
-                amount = item.checkout
-        return amount
-    
     def toSummaryHtml(self):
         '''
         bill:
@@ -114,22 +100,25 @@ class Accrediting:
             checkin = item.checkin
             checkout = item.checkout
             period = item.period
-            fee = item.fee if item.fee is not None else checkout
+            fee = item.getFee()
             phase = 1
             totalamount = 0
             for year in range(startdate.year, startdate.year + 15):
                 startmonth = startdate.month if year == startdate.year else 1
                 yearperiod = 0
                 yearamount = 0
+                startPhase = phase
+                endPhase = phase - 1
                 
                 months = range(startmonth, 13)
                 months = self.adjustMonth(months, year, item)
                 for month in months:
                     amount = 0
                     for index in range(0, quantity):
-                        amount += self.getAmount(phase, index, item)
+                        amount += item.getPhaseAmount(phase, index)
                     yearperiod += 1
                     yearamount += amount
+                    endPhase += 1
                     phase += 1
                     # 到达最后一期, 最后一期不需要供, 跳出循环
                     if phase == period:
@@ -142,7 +131,7 @@ class Accrediting:
                 bill["details"].append(dict(
                     name = item.name,
                     startdate = item.startDatetoString(),
-                    checking = 0,
+                    checking = item.getChecking(startPhase, endPhase),
                     quantity = quantity,
                     period = period,
                     unfinished = period - phase,
@@ -202,15 +191,14 @@ class Accrediting:
         item = self.item
         quantity = item.quantity
         startdate = item.startDate
-        cashOut = len(item.getCashOut())
         checkin = item.checkin
         checkout = item.checkout
         period = item.period
-        fee = item.fee if item.fee is not None else checkout
+        fee = item.getFee()
         bill = dict(
             name = item.name,
             startdate = item.startDatetoString(),
-            checking = quantity - cashOut,
+            checking = item.getChecking(),
             quantity = quantity,
             period = period,
             fee = fee,
@@ -244,7 +232,7 @@ class Accrediting:
                 detail["phase"].append(phaseType)
                 amount = 0
                 for index in range(0, quantity):
-                    amount += self.getAmount(phase, index, item)
+                    amount += item.getPhaseAmount(phase, index)
                 detail["amount"].append(amount)
                 detail["yearamount"] += amount
                 phase += 1

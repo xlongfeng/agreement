@@ -63,7 +63,48 @@ class ItemModel(Base):
     
     def startDatetoString(self):
         return _translate("ItemViewDialog", "{}/{}").format(self.startDate.year, self.startDate.month)
-
+    
+    def getChecking(self, startPhase=None, endPhase=None):
+        ''' 活期名数 '''
+        if startPhase is None or endPhase is None:
+            checking = self.quantity - len(self.getCashOut())
+            checking = 0 if checking < 0 else checking
+        else:
+            checking = self.quantity
+            for cashOut in self.getCashOut():
+                print(startPhase, endPhase, cashOut)
+                if startPhase <= cashOut and cashOut <= endPhase:
+                    checking -= 1
+                elif startPhase > cashOut:
+                    checking -= 1
+        return checking
+    
+    def getPhaseAmount(self, phase, index):
+        ''' 当期供金额 '''
+        checkin = self.checkin
+        
+        if phase == 1:
+            checkin += self.getFee()
+    
+        for markup in self.getMarkup():
+            if phase >= markup["phase"]: # 涨价
+                checkin += markup["amount"]
+    
+        cashOut = self.getCashOut()
+        if index < len(cashOut): # 已取现
+            cachPhase = cashOut[index]
+            if phase == cachPhase:
+                if phase == 1:
+                    checkin = self.getFee()
+                else:
+                    checkin = 0
+            elif phase > cachPhase:
+                checkin = self.checkout
+        return checkin
+    
+    def getFee(self):
+        return self.fee if self.fee is not None else self.checkout
+    
     def getMarkup(self):
         if self.markup is not None and self.markup != "":
             markup = json.loads(self.markup)
@@ -87,7 +128,11 @@ class ItemModel(Base):
         self.cashOut = json.dumps(cashOut)
     
     def getCashOutAmount(self, phase):
-        return (phase - 1) * self.checkout + (self.period - phase - 1) * self.checkin
+        checkin = self.checkin
+        for markup in self.getMarkup():
+            if phase >= markup["phase"]: # 涨价
+                checkin += markup["amount"]
+        return (phase - 1) * self.checkout + (self.period - phase - 1) * checkin
     
     def getDualPhase(self):
         if self.dualPhase is not None and self.dualPhase != "":
