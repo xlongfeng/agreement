@@ -4,7 +4,7 @@
 <context>
     <name>Contract</name>
     <message>
-        <location filename="contract.ui" line="14"/>
+        <location filename="contract.pyw" line="126"/>
         <source>Contract Manager</source>
         <translation>会子管理</translation>
     </message>
@@ -59,7 +59,7 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="contract.pyw" line="146"/>
+        <location filename="contract.pyw" line="160"/>
         <source>Continue to delete {}?</source>
         <translation>继续删除 {} ?</translation>
     </message>
@@ -72,6 +72,26 @@
         <location filename="contract.pyw" line="64"/>
         <source>Delete</source>
         <translation>删除</translation>
+    </message>
+    <message>
+        <location filename="contract.pyw" line="84"/>
+        <source>Help</source>
+        <translation>帮助</translation>
+    </message>
+    <message>
+        <location filename="contract.pyw" line="85"/>
+        <source>Tutorial</source>
+        <translation>使用指南</translation>
+    </message>
+    <message>
+        <location filename="contract.pyw" line="86"/>
+        <source>About...</source>
+        <translation>关于...</translation>
+    </message>
+    <message>
+        <location filename="contract.pyw" line="126"/>
+        <source>If you have any questions please feel free to contact xlongfeng&lt;xlongfeng@126.com&gt;</source>
+        <translation>如果在使用中有任何问题, 请联系 xlongfeng &lt;xlongfeng@126.com&gt;</translation>
     </message>
 </context>
 <context>
@@ -234,12 +254,12 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="item.py" line="188"/>
+        <location filename="item.py" line="232"/>
         <source>New Markup</source>
         <translation>新建涨价</translation>
     </message>
     <message>
-        <location filename="item.py" line="233"/>
+        <location filename="item.py" line="277"/>
         <source>New Cash Out</source>
         <translation>新建取现</translation>
     </message>
@@ -340,97 +360,97 @@
 <context>
     <name>ItemViewDialog</name>
     <message>
-        <location filename="item.py" line="438"/>
+        <location filename="item.py" line="482"/>
         <source>odd</source>
         <translation>单</translation>
     </message>
     <message>
-        <location filename="item.py" line="440"/>
+        <location filename="item.py" line="484"/>
         <source>even</source>
         <translation>双</translation>
     </message>
     <message>
-        <location filename="item.py" line="442"/>
+        <location filename="item.py" line="486"/>
         <source>every</source>
         <translation>每</translation>
     </message>
     <message>
-        <location filename="item.py" line="443"/>
+        <location filename="item.py" line="487"/>
         <source>Since {}, {} month get dual phase</source>
         <translation>从 {} 开始, {}月 过双期</translation>
     </message>
     <message>
-        <location filename="item.py" line="448"/>
+        <location filename="item.py" line="492"/>
         <source>Since {} phase, rise in price {}</source>
         <translation>从 {} 期开始, 涨价 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="168"/>
+        <location filename="item.py" line="212"/>
         <source>No month was checked</source>
         <translation>未选择月份</translation>
     </message>
     <message>
-        <location filename="item.py" line="212"/>
+        <location filename="item.py" line="256"/>
         <source>No amount was input</source>
         <translation>未输入金额</translation>
     </message>
     <message>
-        <location filename="item.py" line="174"/>
+        <location filename="item.py" line="218"/>
         <source>Duplicate date</source>
         <translation>重复日期</translation>
     </message>
     <message>
-        <location filename="item.py" line="266"/>
+        <location filename="item.py" line="310"/>
         <source>Duplicate phase</source>
         <translation>重复期</translation>
     </message>
     <message>
-        <location filename="item.py" line="373"/>
+        <location filename="item.py" line="417"/>
         <source>Exceed quantity</source>
         <translation>超过名数</translation>
     </message>
     <message>
-        <location filename="item.py" line="453"/>
+        <location filename="item.py" line="497"/>
         <source>At {} phase, cash out {}</source>
         <translation>第 {} 期, 取现 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="397"/>
+        <location filename="item.py" line="441"/>
         <source>Continue to delete {}?</source>
         <translation>继续删除 {} ?</translation>
     </message>
     <message>
-        <location filename="item.py" line="321"/>
+        <location filename="item.py" line="365"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location filename="item.py" line="324"/>
+        <location filename="item.py" line="368"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="item.py" line="480"/>
+        <location filename="item.py" line="524"/>
         <source>Quantity is not correct</source>
         <translation>名 输入不正确</translation>
     </message>
     <message>
-        <location filename="item.py" line="484"/>
+        <location filename="item.py" line="528"/>
         <source>Checkin is not correct</source>
         <translation>活期 输入不正确</translation>
     </message>
     <message>
-        <location filename="item.py" line="488"/>
+        <location filename="item.py" line="532"/>
         <source>Checkout is not correct</source>
         <translation>死期 输入不正确</translation>
     </message>
     <message>
-        <location filename="item.py" line="492"/>
+        <location filename="item.py" line="536"/>
         <source>Period is not correct</source>
         <translation>期数 输入不正确</translation>
     </message>
     <message>
-        <location filename="item.py" line="476"/>
+        <location filename="item.py" line="520"/>
         <source>Name is not correct</source>
         <translation>会头 输入不正确</translation>
     </message>
@@ -440,62 +460,62 @@
         <translation>{}年{}月</translation>
     </message>
     <message>
-        <location filename="item.py" line="512"/>
+        <location filename="item.py" line="556"/>
         <source>Create item {}</source>
         <translation>创建会子 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="517"/>
+        <location filename="item.py" line="561"/>
         <source>Change name {} to {}</source>
         <translation>修改会头 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="519"/>
+        <location filename="item.py" line="563"/>
         <source>Change startDate {} to {}</source>
         <translation>修改日期 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="521"/>
+        <location filename="item.py" line="565"/>
         <source>Change quantity {} to {}</source>
         <translation>修改名数 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="523"/>
+        <location filename="item.py" line="567"/>
         <source>Change checkin {} to {}</source>
         <translation>修改活期 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="525"/>
+        <location filename="item.py" line="569"/>
         <source>Change checkout {} to {}</source>
         <translation>修改死期 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="527"/>
+        <location filename="item.py" line="571"/>
         <source>Change fee {} to {}</source>
         <translation>修改会头钱 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="529"/>
+        <location filename="item.py" line="573"/>
         <source>Change period {} to {}</source>
         <translation>修改期数 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="531"/>
+        <location filename="item.py" line="575"/>
         <source>Change markup {} to {}</source>
         <translation>修改涨价 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="533"/>
+        <location filename="item.py" line="577"/>
         <source>Change cashOut {} to {}</source>
         <translation>修改取现 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="535"/>
+        <location filename="item.py" line="579"/>
         <source>Change dualPhase {} to {}</source>
         <translation>修改双期 {} 为 {}</translation>
     </message>
     <message>
-        <location filename="item.py" line="537"/>
+        <location filename="item.py" line="581"/>
         <source>Change note {} to {}</source>
         <translation>修改备注 {} 为 {}</translation>
     </message>

@@ -80,6 +80,10 @@ class Contract(QMainWindow):
         self.itemMenu = menuBar.addMenu(_translate("Contract", "Item"))
         self.itemMenu.addAction(_translate('Contract', 'New Item'), self.newItem)
         self.itemMenu.setDisabled(True)
+        
+        self.helpMenu = menuBar.addMenu(_translate("Contract", "Help"))
+        self.helpMenu.addAction(_translate('Contract', 'Tutorial'), self.tutorial)
+        self.helpMenu.addAction(_translate('Contract', 'About...'), self.about)
     
     def newDatabase(self):
         dialog = NewDatabaseDialog(self)
@@ -114,6 +118,12 @@ class Contract(QMainWindow):
                                                  item.name, str(item.id)]))
             self.database.sortChildren(0, Qt.DescendingOrder)
             self.viewItemDetail(self.database, 0)
+    
+    def tutorial(self):
+        QDesktopServices.openUrl(QUrl.fromEncoded("README.html"))
+    
+    def about(self):
+        QMessageBox.about(self, _translate("Contract", "Contract Manager"), _translate("Contract", "If you have any questions please feel free to contact xlongfeng<xlongfeng@126.com>"))
     
     def viewItemDetail(self, treeWidgetItem, column):
         if "sep-rc" in sys.argv:
